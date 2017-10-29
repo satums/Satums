@@ -16,8 +16,7 @@ public class AppBo  {
 	public void setTemplate(JdbcTemplate template) {
 	this.template = template;
 }
-	public static List query(String sql){
-		
+	public static List query(String sql){	
 		List list=template.queryForList(sql);
 		//List list1=template.queryForList("select * from ou_user");
 		
