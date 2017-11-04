@@ -26,6 +26,9 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
      org.springframework.web.context.ContextLoaderListener
    </listener-class>
 </listener>
+   <listener>  
+        <listener-class>cn.com.satum.server.InitListener</listener-class>  
+    </listener> 
 <listener>
 		<listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
 	</listener>
@@ -63,7 +66,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		</init-param>
 		<load-on-startup>10</load-on-startup>
 	</servlet>
-   
+ 
   
 
 <!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
