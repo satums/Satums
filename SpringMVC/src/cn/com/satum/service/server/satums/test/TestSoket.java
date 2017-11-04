@@ -12,7 +12,7 @@ import cn.com.satum.util.Sender;
 
 public class TestSoket {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 Sender sd=new Sender();
 Reciver rc=new Reciver();

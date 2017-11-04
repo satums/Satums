@@ -61,7 +61,7 @@ public void contextInitialized(ServletContextEvent context) {
                  System.out.println(str_receive); 
                  //String str_send="收到。。。。。。。。。。";
                  //数据发动到客户端的3000端口  
-                 DatagramPacket dp_send= new DatagramPacket(str_send.getBytes(),str_send.length(),dp_receive.getAddress(),9988);  
+                 DatagramPacket dp_send= new DatagramPacket(str_send.getBytes(),str_send.length(),dp_receive.getAddress(),8049);  
                  try {
         			ds.send(dp_send);
         		} catch (IOException e) {

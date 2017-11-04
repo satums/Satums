@@ -1,10 +1,12 @@
 package cn.com.satum.service.server.app;
 
+import java.net.SocketException;
 import java.util.List;
 import java.util.Map;
 
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.util.PostStyle;
+import cn.com.satum.util.Sender;
 public class ConAddService implements AppService {
 
 		public String getInfo(String jsondata){
@@ -30,8 +32,18 @@ public class ConAddService implements AppService {
 			 * 接收传递过来的数据包关联用户ID放入表中存储，并传递
 			 * 
 			 */
+			String flag="S";
+	try {
+		flag=new Sender().send(jsondata);
+	} catch (SocketException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	
-			return "调用接口成功"+jsondata;
+	if(!flag.equals("S")){
+		flag="E";
+	}
+			return flag;
 		}
 
 }

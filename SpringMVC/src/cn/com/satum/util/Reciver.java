@@ -12,7 +12,7 @@ public class Reciver {
 	        // 接收端  
 	        try {  
 	            //创建接收方的套接字 对象  并与send方法中DatagramPacket的ip地址与端口号一致  
-	            DatagramSocket socket = new DatagramSocket(9005,  
+	            DatagramSocket socket = new DatagramSocket(8080,  
 	                    InetAddress.getByName("192.168.1.101"));  
 	            //接收数据的buf数组并指定大小  
 	            byte[] buf = new byte[1024];  
@@ -25,7 +25,6 @@ public class Reciver {
 	            System.out.println("接收的文本:::" + new String(data));  
 	            System.out.println("接收的ip地址:::" + address.toString());  
 	            System.out.println("接收的端口::" + packet.getPort()); // 9004  
-	  
 	            // 告诉发送者 我接收完毕了  
 	            String temp = "我接收完毕了";  
 	            byte buffer[] = temp.getBytes();  
