@@ -19,8 +19,8 @@ public class HEX2And16 {
         }  
         return (char) sum;  
     }  
-public static String hex16tTo2(){
-	 String str = "Ì·Õý±ë";
+public static String hex16tTo2(String str){
+	
 	  char[] strChar=str.toCharArray();
 	  String result="";
 	  for(int i=0;i<strChar.length;i++){
