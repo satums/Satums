@@ -59,6 +59,7 @@ public  String dataUpdate(String zjbhs, String iPs, int ports,String dates){
 public  Map dataQuery(String zjbhs,String jsonData) throws ParseException{
 	List listu=appBo.query("select id from sh_masterdata where zjbh='"+zjbhs+"'");
 	if(listu.size()>0){	
+		appBo.runSQL("update sh_masterdata set content='"+jsonData+"' where zjbh='"+zjbhs+"'");
 	}else{
 		/**
 		 * 解析jsondata获取用户ID
