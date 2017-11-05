@@ -17,11 +17,9 @@ public class RegisterService implements AppService{
 	String pa="";
 		try{
 			appBo.runSQL("INSERT INTO sh_user VALUES ('"+(id+1)+"', '15811137696', '15811137696', '4110357d6bb88fd622c7e08d93dbf4a5', '481162', '', '', '0', '0', '0', '', '谭正彪的家', '0', '0', '1234', '2', '', '2', '2017-07-09 00:21:55', '2017-08-05 17:41:05', null);");
-
 		}catch(Exception e){
 		pa.toString();	
-		}
-		
+		}	
 		return "调用接口成功"+map+pa;
 	}
 

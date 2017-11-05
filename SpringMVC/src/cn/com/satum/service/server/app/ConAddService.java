@@ -1,18 +1,22 @@
 package cn.com.satum.service.server.app;
 
 import java.net.SocketException;
+import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cn.com.Data.Bo.AppBo;
+import cn.com.satum.service.server.util.DataUtil;
 import cn.com.satum.util.PostStyle;
 import cn.com.satum.util.Sender;
 public class ConAddService implements AppService {
 
-		public String getInfo(String jsondata){
+		public String getInfo(String jsonData) {
 			AppBo appBo=new AppBo();
 			String userid="";
 			String conID="";
+			String zjbh="hhhhhhhhhhhsss";
 			/**
 			 * table相当于存储情景、联动等配置的表
 			 * 查询表中是否存在数据，存在即更新不存在就新增
@@ -33,14 +37,27 @@ public class ConAddService implements AppService {
 			 * 
 			 */
 			String flag="S";
+			Map map=new HashMap();
+			//通过主机序列号查询获取IP和端口
+			try {
+				map=new DataUtil().dataQuery(zjbh,jsonData);
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			String IP=map.get("ip").toString();
+			int second=Integer.valueOf(map.get("second").toString());
+			int port=Integer.valueOf(map.get("port").toString());
+			System.out.println(IP+"=================");
 	try {
-		flag=new Sender().send(jsondata);
+		flag=new Sender().send(jsonData,IP,port);
+		System.out.println(flag+"=================");
 	} catch (SocketException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-	
-	if(!flag.equals("S")){
+	//second是检测主机心跳检测的时间可以大于心跳检测时间1-5秒，假设心跳检测时间为60秒
+	if(!flag.equals("S")||second>65){
 		flag="E";
 	}
 			return flag;

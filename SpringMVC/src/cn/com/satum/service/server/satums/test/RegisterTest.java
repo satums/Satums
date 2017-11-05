@@ -8,8 +8,8 @@ import cn.com.satum.util.PostStyle;
 public class RegisterTest {
 public static void main(String[] args) {
 	
-	String json="谭正彪的家3333333";
-	String url="http://192.168.1.101:8080/SpringMVC/services/SatumService?wsdl";
+	String json="{\"username\":\"谭正彪\"}";
+	String url="http://192.168.1.100:8080/SpringMVC/services/SatumService?wsdl";
 	//String urls="http://localhost:8080/SpringMVC/services/SatumService";
 	String service="appService";
 	String method="ConAdd";
