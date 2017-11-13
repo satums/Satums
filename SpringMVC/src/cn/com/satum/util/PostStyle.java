@@ -117,7 +117,8 @@ public class PostStyle {
 		  		    response.append(line);
 		    }
 		    System.out.println(response.toString());
-		    String s=response.toString().split(">")[5];  
+		    String s=response.toString().split(">")[4];  
+		    str=s.split("<")[0];
 		    } catch (IOException ioe) {
 		    response.append(ioe.getMessage());
 		    } finally {
@@ -184,7 +185,7 @@ public class PostStyle {
 			    response.append(line);  
 			    response.append('\n');
 			   
-			    String s=response.toString().split(">")[4];  
+			    String s=response.toString().split(">")[3];  
 			    str=s.split("<")[0];
 			    }
 			    } catch (IOException ioe) {
