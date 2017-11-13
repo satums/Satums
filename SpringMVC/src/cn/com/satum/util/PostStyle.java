@@ -137,8 +137,9 @@ public class PostStyle {
 		    }
 			return str;
 		 }
-		public static String postData(String url,String service,String method,String param,boolean flag) throws IOException {	
-			if(flag){
+		public static String postData(String url,String service,String method,String param) throws IOException {	
+			
+			param=getBase64(param);	
 				  URL wsUrl = new URL(url);    
 			        HttpURLConnection conn = (HttpURLConnection) wsUrl.openConnection();   		
 			    conn.setRequestMethod("POST");
@@ -184,8 +185,8 @@ public class PostStyle {
 			    	 
 			    response.append(line);  
 			    response.append('\n');
-			   
-			    String s=response.toString().split(">")[3];  
+			   System.out.println(response);
+			    String s=response.toString().split(">")[4];  
 			    str=s.split("<")[0];
 			    }
 			    } catch (IOException ioe) {
@@ -206,12 +207,6 @@ public class PostStyle {
 			    }
 			    
 				return str;
-			}else{
-				return "没有进行调用。。。。。。。。。。";
-				
-			}
-			
-			
 		 }
 		public static String getData(String url,List list) throws IOException {
 			String param="";
