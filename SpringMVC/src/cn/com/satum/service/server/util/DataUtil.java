@@ -80,7 +80,7 @@ public  Map dataQuery(String zjbhs,String jsonData) throws ParseException{
 	Map map=null;
 	List list1=appBo.query("select * from sh_onlinedata where zjbh='"+zjbhs+"'");
 	//这里的mm是指主机心跳检测的时间，如果时间大于心跳检测的时间则说明该主机断开连接，云端将状态返回给APP进行状态改变
-	int mm=20;
+	int mm=60;
 	if(list1.size()>0){
 		map=(Map)list1.get(0);
 		String rq=map.get("updated_date").toString();

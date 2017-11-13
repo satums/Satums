@@ -20,7 +20,7 @@ public class RegisterService implements AppService{
 		}catch(Exception e){
 		pa.toString();	
 		}	
-		return "调用接口成功"+map+pa;
+		return new PostStyle().getBase64("调用接口成功"+map+pa);
 	}
 
 }

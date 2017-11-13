@@ -38,7 +38,7 @@ public class ConAddService implements AppService {
 			 */
 			String flag="S";
 			Map map=new HashMap();
-			//通过主机序列号查询获取IP和端口
+
 			try {
 				map=new DataUtil().dataQuery(zjbh,jsonData);
 			} catch (ParseException e1) {
@@ -60,7 +60,7 @@ public class ConAddService implements AppService {
 	if(!flag.equals("S")||second>65){
 		flag="E";
 	}
-			return flag;
+			return new PostStyle().getBase64(flag);
 		}
 
 }
