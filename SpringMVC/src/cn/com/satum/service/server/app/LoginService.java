@@ -21,12 +21,12 @@ public class LoginService implements AppService{
 		Map lmap=JSONObject.fromObject(jsondata);
 		String username=lmap.get("mobile").toString();
 		String pwd=lmap.get("pwd").toString();
-		String sql="select * from sh_user where mobile='"+username+"'";
+		String sql="select password from sh_user where mobile='"+username+"'";
 		List list=appBo.query(sql);
 		Map map=new  HashMap();
-		if(list.size()>0){
+		if(list.size()>0){	
 			Map mup=(Map)list.get(0);
-			String pwds=mup.get("pwd").toString();
+			String pwds=mup.get("password").toString();
 			try {
 				boolean mark=cd.checkpassword(pwd, pwds);
 				if(mark){
