@@ -1,26 +1,61 @@
 package cn.com.satum.service.server.app;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.fastjson.JSONObject;
 
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.util.PostStyle;
 
-public class RegisterService implements AppService{
-	public String getInfo(String jsondata){
-		System.out.println("===111111111====="+jsondata);
-		AppBo appBo=new AppBo();
-		List list=appBo.query("select max(id) id from sh_user");
-	Map map=(Map)list.get(0);
-	int id=0;
-	id=Integer.valueOf(map.get("id").toString());
-	String pa="";
-		try{
-			appBo.runSQL("INSERT INTO sh_user VALUES ('"+(id+1)+"', '15811137696', '15811137696', '4110357d6bb88fd622c7e08d93dbf4a5', '481162', '', '', '0', '0', '0', '', '谭正彪的家', '0', '0', '1234', '2', '', '2', '2017-07-09 00:21:55', '2017-08-05 17:41:05', null);");
-		}catch(Exception e){
-		pa.toString();	
-		}	
-		return new PostStyle().getBase64("调用接口成功"+map+pa);
+public class RegisterService implements AppService {
+	public String getInfo(String jsondata) {
+
+		JSONObject jsStr = JSONObject.parseObject(jsondata);
+
+		String userName = (String) jsStr.getString("username");// 用户名
+		String passWord = (String) jsStr.getString("password");// 密码
+		String salt = (String) jsStr.getString("salt");// 密钥
+		String mobile = (String) jsStr.getString("mobile");// 手机号
+		String email = (String) jsStr.getString("email");// 邮箱
+		int areaId = (int) jsStr.getInteger("area_id");// 地区
+		int proviceId = (int) jsStr.getInteger("provice_id");// 省
+		int cityId = (int) jsStr.getInteger("city_id");// 市
+		String address = (String) jsStr.getString("address");// 详细地址
+		String house = (String) jsStr.getString("house");// 房屋名称
+		String systemPwd = (String) jsStr.getString("system_pwd");// 系统密码
+		int status = (int) jsStr.getInteger("status");// 状态：1禁用2正常
+		int isDel = (int) jsStr.getInteger("is_del");// 数据库是否删除记录:1删除 2正常
+		String ip = (String) jsStr.getString("ip");// 注册ip
+		int hostId = (int) jsStr.getInteger("host_id");// 默认主机id
+		int skinId = (int) jsStr.getInteger("skin_id");// 皮肤id
+		String pic = (String) jsStr.getString("pic");// 头像地址
+
+		List<Map<String, Object>> list = AppBo.query("select max(id) id from sh_user");
+		Map<String, Object> map = list.get(0);
+		int id = Integer.valueOf((String) map.get("id")) + 1;
+
+		Map<String, Object> reqMap = new HashMap<String, Object>();
+		try {
+
+			AppBo.runSQL(
+					"INSERT INTO sh_user (id,username,password,salt,mobile,email,area_id,provice_id,city_id,address,house,system_pwd,status,is_del,ip,host_id,skin_id,pic) VALUES ("
+							+ id + "," + userName + "," + passWord + ",''," + mobile + "," + email + "," + areaId + ","
+							+ proviceId + "," + cityId + "," + address + "," + house + ",''," + Integer.valueOf(2) + ","
+							+ Integer.valueOf(2) + "," + ip + "," + hostId + "," + skinId + "," + pic + ")");
+
+			reqMap.put("result", "S");
+			reqMap.put("sucmsg", "注册成功！");
+			JSONObject json = new JSONObject(reqMap);
+			return json.toString();
+		} catch (Exception e) {
+			reqMap.put("result", "E");
+			reqMap.put("errmsg", e.getMessage());
+			JSONObject json = new JSONObject(reqMap);
+			return json.toString();
+		}
+
 	}
 
 }
