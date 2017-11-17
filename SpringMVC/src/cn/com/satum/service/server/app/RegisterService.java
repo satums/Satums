@@ -3,10 +3,12 @@ package cn.com.satum.service.server.app;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.alibaba.fastjson.JSONObject;
 
 import cn.com.Data.Bo.AppBo;
+import cn.com.satum.service.server.util.DataUtil;
 import cn.com.satum.util.PostStyle;
 
 public class RegisterService implements AppService {
@@ -32,18 +34,15 @@ public class RegisterService implements AppService {
 		int skinId = (int) jsStr.getInteger("skin_id");// 皮肤id
 		String pic = (String) jsStr.getString("pic");// 头像地址
 
-		List<Map<String, Object>> list = AppBo.query("select max(id) id from sh_user");
-		Map<String, Object> map = list.get(0);
-		int id = Integer.valueOf((String) map.get("id")) + 1;
-
 		Map<String, Object> reqMap = new HashMap<String, Object>();
 		try {
 
 			AppBo.runSQL(
 					"INSERT INTO sh_user (id,username,password,salt,mobile,email,area_id,provice_id,city_id,address,house,system_pwd,status,is_del,ip,host_id,skin_id,pic) VALUES ("
-							+ id + "," + userName + "," + passWord + ",''," + mobile + "," + email + "," + areaId + ","
-							+ proviceId + "," + cityId + "," + address + "," + house + ",''," + Integer.valueOf(2) + ","
-							+ Integer.valueOf(2) + "," + ip + "," + hostId + "," + skinId + "," + pic + ")");
+							+ DataUtil.getUUID() + "," + userName + "," + passWord + ",''," + mobile + "," + email + ","
+							+ areaId + "," + proviceId + "," + cityId + "," + address + "," + house + ",'',"
+							+ Integer.valueOf(2) + "," + Integer.valueOf(2) + "," + ip + "," + hostId + "," + skinId
+							+ "," + pic + ")");
 
 			reqMap.put("result", "S");
 			reqMap.put("sucmsg", "注册成功！");
