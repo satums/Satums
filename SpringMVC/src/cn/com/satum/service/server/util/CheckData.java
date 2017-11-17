@@ -31,6 +31,7 @@ public static  String EncoderByMd5(String str) throws NoSuchAlgorithmException, 
     BASE64Encoder base64en = new BASE64Encoder();
     //加密后的字符串
     String newstr=base64en.encode(md5.digest(str.getBytes("utf-8")));
+    
     return newstr;
 }
 /**判断用户密码是否正确
