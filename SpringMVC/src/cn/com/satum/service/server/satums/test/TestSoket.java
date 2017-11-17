@@ -16,7 +16,7 @@ public class TestSoket {
 		// TODO Auto-generated method stub
 Sender sd=new Sender();
 Reciver rc=new Reciver();
-sd.send("Ì·Õý±ë-----------------");
+//sd.send("Ì·Õý±ë-----------------");
 /**
 ServerSocket serverSocket=null;
       Socket socket=null;
