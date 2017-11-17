@@ -103,9 +103,9 @@ public class DataUtil {
 		return map;
 	}
 
-	public static int getUUID() {
+	public static String getUUID() {
 
-		return Integer.valueOf(UUID.randomUUID().toString());
+		return UUID.randomUUID().toString();
 	}
 
 }
