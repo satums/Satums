@@ -3,6 +3,7 @@ package cn.com.satum.service.server.app;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,19 +18,37 @@ import cn.com.satum.service.server.util.DataUtil;
 public class RegisterService implements AppService {
 	public String getInfo(String jsondata) {
 
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		Map<String, Object> reqmap = JSON.parseObject(jsondata);
 
 		String userName = (String) reqmap.get("username");// 用户名
 		if (StringUtils.isBlank(userName)) {
-
+			resMap.put("result", "E");
+			resMap.put("errmsg", "用户名不能为空！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
 		}
 		String passWord = (String) reqmap.get("password");// 密码
 		if (StringUtils.isBlank(passWord)) {
-			passWord = "";
+			resMap.put("result", "E");
+			resMap.put("errmsg", "密码不能为空！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
 		}
 		String mobile = (String) reqmap.get("mobile");// 手机号
 		if (StringUtils.isBlank(mobile)) {
-			mobile = "";
+			resMap.put("result", "E");
+			resMap.put("errmsg", "手机号不能为空！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
+		String sql = "select password from sh_user where mobile='" + mobile + "'";
+		List list = AppBo.query(sql);
+		if (list != null && list.size() > 0) {
+			resMap.put("result", "E");
+			resMap.put("errmsg", "该手机号已注册！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
 		}
 		String email = (String) reqmap.get("email");// 邮箱
 		if (StringUtils.isBlank(email)) {
@@ -93,7 +112,6 @@ public class RegisterService implements AppService {
 			// int status = (int) reqmap.get("status");// 状态：1禁用2正常
 			// int isDel = (int) reqmap.get("is_del");// 数据库是否删除记录:1删除 2正常
 
-		Map<String, Object> resMap = new HashMap<String, Object>();
 		try {
 
 			AppBo.runSQL(
@@ -109,7 +127,8 @@ public class RegisterService implements AppService {
 			return json.toString();
 		} catch (Exception e) {
 			resMap.put("result", "E");
-			resMap.put("errmsg", e.getMessage());
+			System.out.println("error：" + e.getMessage());
+			resMap.put("errmsg", "系统错误！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
