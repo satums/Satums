@@ -24,21 +24,21 @@ public class RegisterService implements AppService {
 		String userName = (String) reqmap.get("username");// 用户名
 		if (StringUtils.isBlank(userName)) {
 			resMap.put("result", "E");
-			resMap.put("errmsg", "用户名不能为空！");
+			resMap.put("msg", "用户名不能为空！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
 		String passWord = (String) reqmap.get("password");// 密码
 		if (StringUtils.isBlank(passWord)) {
 			resMap.put("result", "E");
-			resMap.put("errmsg", "密码不能为空！");
+			resMap.put("msg", "密码不能为空！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
 		String mobile = (String) reqmap.get("mobile");// 手机号
 		if (StringUtils.isBlank(mobile)) {
 			resMap.put("result", "E");
-			resMap.put("errmsg", "手机号不能为空！");
+			resMap.put("msg", "手机号不能为空！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
@@ -46,7 +46,7 @@ public class RegisterService implements AppService {
 		List list = AppBo.query(sql);
 		if (list != null && list.size() > 0) {
 			resMap.put("result", "E");
-			resMap.put("errmsg", "该手机号已注册！");
+			resMap.put("msg", "该手机号已注册！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
@@ -122,13 +122,13 @@ public class RegisterService implements AppService {
 							+ skinId + ",'" + pic + "')");
 
 			resMap.put("result", "S");
-			resMap.put("sucmsg", "注册成功！");
+			resMap.put("msg", "注册成功！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		} catch (Exception e) {
 			resMap.put("result", "E");
 			System.out.println("error：" + e.getMessage());
-			resMap.put("errmsg", "系统错误！");
+			resMap.put("msg", "系统错误！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
