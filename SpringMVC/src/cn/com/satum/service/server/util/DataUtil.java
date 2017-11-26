@@ -105,7 +105,7 @@ public class DataUtil {
 
 	public static String getUUID() {
 
-		return UUID.randomUUID().toString();
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 
 }
