@@ -19,6 +19,7 @@ public class Sender {
 		try {
 			// 发送的内容
 //			text = "弋辛博的家。。。!";
+			text="0xAA0100111001110X55";
 			byte[] buf = text.getBytes();
 			// 构造数据报包，用来将长度为 length 的包发送到指定主机上的指定端口号。
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(IP),port);
