@@ -128,7 +128,7 @@ public class RegisterService implements AppService {
 		} catch (Exception e) {
 			resMap.put("result", "E");
 			System.out.println("error：" + e.getMessage());
-			resMap.put("msg", "系统错误！");
+			resMap.put("msg","系统错误！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
