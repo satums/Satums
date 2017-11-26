@@ -36,4 +36,9 @@ public static String hex2To16(String result){
 	  }
 	return new String(tempChar);
 }
+public static void main(String[] args) {
+	System.out.println(hex16tTo2("uuu123456"));
+
+	System.out.println(hex2To16("1110101 1110101 1110101 110001 110010 110011 110100 110101 110110"));
+}
 }
