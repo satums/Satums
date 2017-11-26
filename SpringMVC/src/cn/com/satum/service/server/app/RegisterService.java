@@ -21,6 +21,13 @@ public class RegisterService implements AppService {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		Map<String, Object> reqmap = JSON.parseObject(jsondata);
 
+		String mobile = (String) reqmap.get("mobile");// 手机号
+		if (StringUtils.isBlank(mobile)) {
+			resMap.put("result", "E");
+			resMap.put("msg", "手机号不能为空！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
 		String userName = (String) reqmap.get("username");// 用户名
 		if (StringUtils.isBlank(userName)) {
 			resMap.put("result", "E");
@@ -32,13 +39,6 @@ public class RegisterService implements AppService {
 		if (StringUtils.isBlank(passWord)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "密码不能为空！");
-			JSONObject json = new JSONObject(resMap);
-			return json.toString();
-		}
-		String mobile = (String) reqmap.get("mobile");// 手机号
-		if (StringUtils.isBlank(mobile)) {
-			resMap.put("result", "E");
-			resMap.put("msg", "手机号不能为空！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
@@ -128,7 +128,7 @@ public class RegisterService implements AppService {
 		} catch (Exception e) {
 			resMap.put("result", "E");
 			System.out.println("error：" + e.getMessage());
-			resMap.put("msg","系统错误！");
+			resMap.put("msg", "系统错误！");
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
