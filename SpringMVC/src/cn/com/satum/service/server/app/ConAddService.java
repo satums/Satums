@@ -47,11 +47,9 @@ public class ConAddService implements AppService {
 			}
 			String IP=map.get("ip").toString();
 			int second=Integer.valueOf(map.get("second").toString());
-			int port=Integer.valueOf(map.get("port").toString());
-			System.out.println(IP+"=================");
+			int port=Integer.valueOf(map.get("port").toString());	
 	try {
 		flag=new Sender().send(jsonData,IP,port);
-		System.out.println(flag+"=================");
 	} catch (SocketException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

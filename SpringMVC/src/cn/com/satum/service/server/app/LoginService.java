@@ -20,7 +20,7 @@ public class LoginService implements AppService{
 		String msg="³É¹¦";
 		Map lmap=JSONObject.fromObject(jsondata);
 		String username=lmap.get("mobile").toString();
-		String pwd=lmap.get("pwd").toString();
+		String pwd=lmap.get("password").toString();
 		String sql="select password from sh_user where mobile='"+username+"'";
 		List list=appBo.query(sql);
 		Map map=new  HashMap();
