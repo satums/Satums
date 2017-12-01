@@ -11,7 +11,6 @@ import cn.com.satum.service.server.util.DataUtil;
 import cn.com.satum.util.PostStyle;
 import cn.com.satum.util.Sender;
 public class ConAddService implements AppService {
-
 		public String getInfo(String jsonData) {
 			AppBo appBo=new AppBo();
 			String userid="";
