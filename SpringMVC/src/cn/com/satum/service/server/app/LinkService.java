@@ -11,5 +11,4 @@ public class LinkService  implements AppService{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

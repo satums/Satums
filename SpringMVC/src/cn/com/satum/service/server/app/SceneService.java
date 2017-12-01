@@ -62,7 +62,6 @@ public class SceneService  implements AppService{
 	public String getInfo(String jsondata) {
 		// TODO Auto-generated method stub
 		
-
 		Map map=new  HashMap();
 		Map lmap=JSONObject.fromObject(jsondata);
 		String mark=(String)lmap.get("flag");

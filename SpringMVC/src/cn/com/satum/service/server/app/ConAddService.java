@@ -37,7 +37,6 @@ public class ConAddService implements AppService {
 			 */
 			String flag="S";
 			Map map=new HashMap();
-
 			try {
 				map=new DataUtil().dataQuery(zjbh,jsonData);
 			} catch (ParseException e1) {

@@ -11,5 +11,4 @@ public class DeviceService implements AppService{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

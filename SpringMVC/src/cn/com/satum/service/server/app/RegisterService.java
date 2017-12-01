@@ -111,7 +111,6 @@ public class RegisterService implements AppService {
 		} // 密钥
 			// int status = (int) reqmap.get("status");// 状态：1禁用2正常
 			// int isDel = (int) reqmap.get("is_del");// 数据库是否删除记录:1删除 2正常
-
 		try {
 
 			AppBo.runSQL(
