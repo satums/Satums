@@ -84,11 +84,13 @@ public class SceneService  implements AppService{
 	}
 	public static Map update(String scene_code,Object[] devices,Object[] links){	
 		Map map=new HashMap();
-		
 		List lists=appBo.query(sqls+" where scene_code='"+scene_code+"'");
 		if(lists.size()<1){
 			flag="E";
 			msg="场景不存在，请先添加场景！";
+		}else{
+			flag="S";
+			msg="成功";
 		}
 		//更新情景设备子表
 		for(int i=0;i<devices.length;i++){
@@ -152,6 +154,10 @@ public class SceneService  implements AppService{
 					appBo.runSQL("insert into sh_scene_linksub (id,scene_code,link_code,name,status,contime) values"
 							+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+link_code+"','"+link_name+"','"+status+"','"+controller+"')");		
 			}
+			
+				flag="S";
+				msg="成功";
+			
 		}
 		map.put("result",flag);
 		map.put("msg",msg);
@@ -164,6 +170,10 @@ public class SceneService  implements AppService{
 			flag="E";
 			msg="场景不存在，请确认！";
 		}else{
+			
+				flag="S";
+				msg="成功";
+			
 			appBo.runSQL("update sh_common_scene set is_del='1'");	
 		}
 		map.put("result",flag);
