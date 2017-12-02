@@ -73,7 +73,7 @@ public class SceneService  implements AppService{
 		JSONArray link=JSONObject.fromObject(jsondata).getJSONArray("link");
 		Object[] links=link.toArray();
 		if(mark.equals("add")){
-			map=add(scene_code,user_code,devices,links);
+			map=add(scene_code,scene_name,user_code,devices,links);
 		}else if(mark.equals("update")){
 			map=update(scene_code,devices,links);
 		}else{
@@ -84,6 +84,7 @@ public class SceneService  implements AppService{
 	}
 	public static Map update(String scene_code,Object[] devices,Object[] links){	
 		Map map=new HashMap();
+		
 		List lists=appBo.query(sqls+" where scene_code='"+scene_code+"'");
 		if(lists.size()<1){
 			flag="E";
@@ -124,7 +125,7 @@ public class SceneService  implements AppService{
 		map.put("msg",msg);
 		return map;
 	}
-	public static Map add(String scene_code,String user_code,Object[] devices,Object[] links){
+	public static Map add(String scene_code,String scene_name,String user_code,Object[] devices,Object[] links){
 		Map map=new HashMap();
 		List lists=appBo.query(sqls+" where scene_code='"+scene_code+"'");
 		if(lists.size()>0){
@@ -132,7 +133,7 @@ public class SceneService  implements AppService{
 			msg="场景已存在，请对场景进行编辑！";
 		}else{
 			appBo.runSQL("insert into sh_common_scene (id,scene_code,user_code,name) values"
-					+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+user_code+"')");
+					+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+user_code+"','"+scene_name+"')");
 			for(int i=0;i<devices.length;i++){
 				Map dmap=(Map)devices[i];
 				device_code=(String)dmap.get("device_code");
