@@ -56,8 +56,8 @@ public class TimeService  implements AppService{
 		appBo.runSQL("insert into sh_common_time (id,user_code,time_code,time_name,starts,ends,status) values"
 				+ "('"+DataUtil.getUUID()+"','"+user_code+"','"+time_code+"','"+time_name+"','"+starts+"','"+ends+"','"+user_code+"')");
 	}
-	flag="S";
-	msg="成功";
+		flag="S";
+		msg="成功";
 	}catch(Exception e){
 				flag="E";
 				msg=e.getMessage();
