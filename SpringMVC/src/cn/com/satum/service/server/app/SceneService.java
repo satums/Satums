@@ -92,6 +92,7 @@ public class SceneService  implements AppService{
 			flag="S";
 			msg="成功";
 		}
+		try{
 		//更新情景设备子表
 		for(int i=0;i<devices.length;i++){
 			Map dmap=(Map)devices[i];
@@ -108,8 +109,8 @@ public class SceneService  implements AppService{
 						+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+device_code+"','"+device_name+"','"+status+"','"+controller+"')");	
 			}			
 		} 
-		for(int i=0;i<devices.length;i++){
-			Map dmap=(Map)devices[i];
+		for(int i=0;i<links.length;i++){
+			Map dmap=(Map)links[i];
 			link_code=(String)dmap.get("link_code");
 			link_name=(String)dmap.get("link_name");
 			status=(String)dmap.get("status");
@@ -123,6 +124,12 @@ public class SceneService  implements AppService{
 						+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+link_code+"','"+link_name+"','"+status+"','"+controller+"')");	
 			}
 		}
+		flag="S";
+		msg="成功";
+		}catch(Exception e){
+			flag="E";
+			msg=e.getMessage();
+		}
 		map.put("result",flag);
 		map.put("msg",msg);
 		return map;
@@ -134,6 +141,7 @@ public class SceneService  implements AppService{
 			flag="E";
 			msg="场景已存在，请对场景进行编辑！";
 		}else{
+			try{
 			appBo.runSQL("insert into sh_common_scene (id,scene_code,user_code,name) values"
 					+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+user_code+"','"+scene_name+"')");
 			for(int i=0;i<devices.length;i++){
@@ -155,8 +163,12 @@ public class SceneService  implements AppService{
 							+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+link_code+"','"+link_name+"','"+status+"','"+controller+"')");		
 			}
 			
-				flag="S";
-				msg="成功";
+			flag="S";
+			msg="成功";
+			}catch(Exception e){
+				flag="E";
+				msg=e.getMessage();
+			}
 			
 		}
 		map.put("result",flag);
@@ -174,7 +186,7 @@ public class SceneService  implements AppService{
 				flag="S";
 				msg="成功";
 			
-			appBo.runSQL("update sh_common_scene set is_del='1'");	
+			appBo.runSQL("update sh_common_scene set is_del='1' where scene_code='"+scene_code+"'");	
 		}
 		map.put("result",flag);
 		map.put("msg",msg);
