@@ -64,7 +64,12 @@ public class DeviceService implements AppService{
 		}else{
 			try{
 			appBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,status) values "
-					+ "('"+DataUtil.getUUID()+"','"+user_code+"','"+device_type_id+"','"+device_type_name+"','"+num+"','"+name+"','"+status+"')");			
+					+ "('"+DataUtil.getUUID()+"','"+user_code+"','"+device_type_id+"','"+device_type_name+"','"+num+"','"+name+"','"+status+"')");	
+			/**
+			 * 待定：
+			 * 
+			 * 向主机推送数据，存储设备信息。
+			 */
 			flag="S";
 			msg="成功";
 			}catch(Exception e){
