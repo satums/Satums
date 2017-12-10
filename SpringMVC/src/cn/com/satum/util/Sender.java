@@ -11,7 +11,7 @@ public class Sender {
 
 	// 发送者--->客户端 客户端--->发送者
 	// 发送者发给客户端数据,客户端返回数据给发送者
-	public String send(String text,String IP,int port) throws SocketException {
+	public String send( String text,String IP,int port) throws SocketException {
 		System.out.println("---send----");
 		this.socket = new DatagramSocket();
 		String param="S";
@@ -19,9 +19,11 @@ public class Sender {
 		try {
 			// 发送的内容
 //			text = "弋辛博的家。。。!";
-			text="0xAA0100111001110X55";
+			text="0xAA"+text+"0X55";
 			byte[] buf = text.getBytes();
+			
 			// 构造数据报包，用来将长度为 length 的包发送到指定主机上的指定端口号。
+			
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(IP),port);
 			InetAddress address=InetAddress.getByName(IP);
 			System.out.println(address+"000000000000000-----------------");
