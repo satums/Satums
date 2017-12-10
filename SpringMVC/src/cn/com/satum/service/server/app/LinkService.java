@@ -112,7 +112,7 @@ public class LinkService  implements AppService{
 		}else if(mark.equals("update")){
 			map=update(link_code,devices,scenes,terms,times);
 		}else{
-			map=delete(link_code,devices,scenes,terms,times);
+			map=delete(user_code,link_code,devices,scenes,terms,times);
 		}		
 			JSONObject json=JSONObject.fromObject(map);
 		return json.toString();	
@@ -263,7 +263,7 @@ public class LinkService  implements AppService{
 		map.put("msg",msg);
 		return map;
 	}
-	public static Map delete(String link_code,Object[] devices,Object[] scenes,Object[] terms,Object[] times){
+	public static Map delete(String user_code,String link_code,Object[] devices,Object[] scenes,Object[] terms,Object[] times){
 		Map map=new HashMap();
 		List lists=appBo.query(sqls+" where link_code='"+scene_code+"'");
 		if(lists.size()>0){
@@ -274,7 +274,7 @@ public class LinkService  implements AppService{
 				flag="S";
 				msg="³É¹¦";
 			
-			appBo.runSQL("update sh_common_link set is_del='1' where link_code='"+link_code+"'");	
+			appBo.runSQL("update sh_common_link set is_del='1' where user_code='"+user_code+"' and link_code='"+link_code+"'");	
 		}
 		map.put("result",flag);
 		map.put("msg",msg);

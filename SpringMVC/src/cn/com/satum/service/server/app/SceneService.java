@@ -77,7 +77,7 @@ public class SceneService  implements AppService{
 		}else if(mark.equals("update")){
 			map=update(scene_code,devices,links);
 		}else{
-			map=delete(scene_code,devices,links);
+			map=delete(user_code,scene_code,devices,links);
 		}		
 			JSONObject json=JSONObject.fromObject(map);
 		return json.toString();	
@@ -175,18 +175,16 @@ public class SceneService  implements AppService{
 		map.put("msg",msg);
 		return map;
 	}
-	public static Map delete(String scene_code,Object[] devices,Object[] links){
+	public static Map delete(String user_code,String scene_code,Object[] devices,Object[] links){
 		Map map=new HashMap();
-		List lists=appBo.query(sqls+" where scene_code='"+scene_code+"'");
+		List lists=appBo.query(sqls+" where scene_code='"+scene_code+"' and user_code='"+user_code+"'");
 		if(lists.size()>0){
 			flag="E";
 			msg="场景不存在，请确认！";
 		}else{
-			
+			appBo.runSQL("update sh_common_scene set is_del='1' where user_code='"+user_code+"' and  scene_code='"+scene_code+"'");	
 				flag="S";
-				msg="成功";
-			
-			appBo.runSQL("update sh_common_scene set is_del='1' where scene_code='"+scene_code+"'");	
+				msg="成功";	
 		}
 		map.put("result",flag);
 		map.put("msg",msg);
