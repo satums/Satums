@@ -55,7 +55,6 @@ public class DeviceService implements AppService{
 			JSONObject json=JSONObject.fromObject(map);
 		return json.toString();	
 	}
-	
 	public static Map add(String user_code){
 		Map map=new HashMap();
 		List lists=appBo.query(sqls+" where user_code='"+user_code+"' and num='"+num+"'");

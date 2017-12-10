@@ -272,8 +272,7 @@ public class LinkService  implements AppService{
 		}else{
 			
 				flag="S";
-				msg="成功";
-			
+				msg="成功";		
 			appBo.runSQL("update sh_common_link set is_del='1' where user_code='"+user_code+"' and link_code='"+link_code+"'");	
 		}
 		map.put("result",flag);

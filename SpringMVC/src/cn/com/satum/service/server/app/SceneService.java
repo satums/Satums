@@ -168,8 +168,7 @@ public class SceneService  implements AppService{
 			}catch(Exception e){
 				flag="E";
 				msg=e.getMessage();
-			}
-			
+			}			
 		}
 		map.put("result",flag);
 		map.put("msg",msg);
