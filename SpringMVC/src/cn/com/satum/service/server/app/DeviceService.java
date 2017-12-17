@@ -47,6 +47,7 @@ public class DeviceService implements AppService{
 		device_type_name=(String)lmap.get("device_type_name");
 		num=(String)lmap.get("num");
 		name=(String)lmap.get("name");
+		status=(String)lmap.get("status");
 		if(mark.equals("add")){
 			map=add(user_code);
 		}else{
