@@ -158,7 +158,7 @@ public String ControllerScene(Map mapm,String user_code,String scene_code,String
 			if(listd.size()>0&&listl.size()<1){
 				List listds=new ArrayList();
 				Map mapds=new HashMap();
-				appBo.runSQL("update sh_scene_devicesub set status='"+statu2+"' where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");
+				appBo.runSQL("update sh_common_link set status='"+statu2+"' where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");
 				appBo.runSQL("update sh_scene_linksub set status='"+statu1+"' where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");	
 				List listd1=appBo.query("select * from sh_scene_devicesub where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");
 				List listd2=appBo.query("select * from sh_scene_linksub where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu2+"'");			
