@@ -70,7 +70,7 @@ public class ConAddService implements AppService {
 			flag=new DataUtil().ControllerScene(maps,userid, conID, status);
 			break;
 		case "link":
-			flag=new DataUtil().ControllerDevice(maps,userid, conID, status);
+			flag=new DataUtil().ControllerLink(maps,userid, conID, status);
 			break;
 		
 		}			

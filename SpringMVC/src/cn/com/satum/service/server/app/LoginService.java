@@ -39,7 +39,12 @@ public class LoginService implements AppService{
 			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}		
+			}	
+			/**
+			 * 
+			 * 
+			 * 查询用户下所有设备状态
+			 */
 		}else{
 			map.put("result","E");
 			map.put("msg","用户不存在，清先进行注册。");
