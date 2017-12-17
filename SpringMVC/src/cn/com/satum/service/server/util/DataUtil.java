@@ -161,7 +161,7 @@ public String ControllerScene(Map mapm,String user_code,String scene_code,String
 				appBo.runSQL("update sh_scene_devicesub set status='"+statu2+"' where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");
 				appBo.runSQL("update sh_scene_linksub set status='"+statu1+"' where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");	
 				List listd1=appBo.query("select * from sh_scene_devicesub where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu1+"'");
-				List listd2=appBo.query("select * from sh_scene_devicesub where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu2+"'");			
+				List listd2=appBo.query("select * from sh_scene_linksub where  user_code='"+user_code+"' and scene_code='"+scene_code+"' and status='"+statu2+"'");			
 				for(int i=0;i<listd1.size();i++){
 					//执行sql设备关闭
 					Map m=(Map)listd1.get(i);
