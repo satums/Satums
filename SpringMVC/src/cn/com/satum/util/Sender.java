@@ -45,6 +45,6 @@ public class Sender {
 		return param;
 	}
 	public static void main(String[] args) throws SocketException {
-		new Sender().send("模拟主机1", "192.168.0.108", 8049);
+		new Sender().send("模拟主机1", "192.168.0.101", 8049);
 	}
 }
