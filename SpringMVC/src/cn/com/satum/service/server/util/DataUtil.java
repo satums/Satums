@@ -9,13 +9,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.util.HEX2And16;
 
 public class DataUtil {
-	private AppBo appBo;
-
+	private static AppBo appBo;
+	//多组
+	private final static String jsondata="{"
+			+ "\"zjbh\":\"hhhhhhhhhhhsss\""		
+			+ "data:["
+			+ "{\"num\":\"A01\","
+			+ "\"name\":\"A电源一\","
+			+ "\"status\":\"1\"},"
+			+ "{\"num\":\"B01\","
+			+ "\"name\":\"A电源二\","
+			+ "\"status\":\"2\"},"
+			+ "{\"num\":\"A02\","
+			+ "\"name\":\"A电源一\","
+			+ "\"status\":\"1\"}"
+			+ "]}";
 	// 解析二进制访问服务端时发送的数据
 	public String dataParse(String data, String IPs, int ports) {
 		/**
@@ -27,37 +41,52 @@ public class DataUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dates = sdf.format(date);
 		String zjbh = "hhhhhhhhhhhsss";
+		//更新设备信息
+		updateDevice(data);
+		//更新主机的心跳报
 		return new DataUtil().dataUpdate(zjbh, IPs, ports, dates);
 	}
-
+public static void updateDevice(String data){
+	String json=new HEX2And16().hex2To16(data);
+	Map map=JSONObject.fromObject(json);
+	String zjbh=(String)map.get("zjbh");
+	List list=appBo.query("select sh_masterdata where zjbh='"+zjbh+"'");
+	String userid="";
+	if(list.size()>0){
+		userid=(String) ((Map)list.get(0)).get("user_code");
+	}else{
+		
+	}
+	JSONArray datas=JSONObject.fromObject(jsondata).getJSONArray("data");
+	String dnum="";
+	String status="";
+	Object[] devices=datas.toArray();	
+	for(int i=0;i<devices.length;i++){
+		Map mapd=(Map)devices[i];		
+		dnum=(String)mapd.get("num");
+		status=(String)mapd.get("status");
+		String sql="update sh_device set status='"+status+"' where user_code='"+userid+"'";
+	}
+}
 	// 对主机数据进行更新
 	public String dataUpdate(String zjbhs, String iPs, int ports, String dates) {
 		List list = appBo.query("select id from sh_onlinedata where zjbh='" + zjbhs + "'");
 		String message = "S";
 		if (list.size() > 0) {
-			// System.out.println("-------------===================update"+"update
-			// sh_onlinedata set
-			// updated_date='"+dates+"',IP='"+iPs+"',port='"+ports+"' where
-			// zjbh='"+zjbhs+"'");
 			appBo.runSQL("update sh_onlinedata set updated_date='" + dates + "',IP='" + iPs + "',port='" + ports
 					+ "' where zjbh='" + zjbhs + "'");
 		} else {
-
-			List list1 = appBo.query("select max(id) id from sh_onlinedata");
-			Map map = (Map) list1.get(0);
-			int id = 0;
-			if (map.get("id") != null) {
-				id = Integer.valueOf(map.get("id").toString());
+			List list2 = appBo.query("select max(id) id from sh_masterdata");
+			Map map2 = (Map) list2.get(0);
+			int id2 = 0;
+			if (map2.get("id") != null) {
+				id2 = Integer.valueOf(map2.get("id").toString());
 			} else {
-				id = 0;
+				id2 = 0;
 			}
-
+			message="主机不是本厂家生产，没有相关主机记录。";
 			try {
-				String sql = "INSERT INTO sh_onlinedata VALUES ('" + (id + 1) + "','" + zjbhs + "','" + iPs + "','"
-						+ ports + "','" + dates + "','" + dates + "','0','','')";
-				System.out.println(sql);
-				appBo.runSQL("INSERT INTO sh_onlinedata VALUES ('" + (id + 1) + "','" + zjbhs + "','" + iPs + "','"
-						+ ports + "','" + dates + "','" + dates + "','0','','')");
+				appBo.runSQL("INSERT INTO sh_masterdata VALUES ('" + (id2 + 1) + "','','" + zjbhs + "','','0','','')");
 			} catch (Exception e) {
 				message = e.getMessage();
 			}
@@ -66,27 +95,14 @@ public class DataUtil {
 	}
 
 	// 通过主机编号查询获取主机的详细信息,并把用户关联主机信息插入表中
-	public Map dataQuery(String zjbhs, String jsonData) throws ParseException {
-		List listu = appBo.query("select id from sh_masterdata where zjbh='" + zjbhs + "'");
+	public Map dataQuery(String zjbhs, String userid) throws ParseException {
+		List listu = appBo.query("select id from sh_masterdata where user_code='" + userid + "' and zjbh='"+zjbhs+"'");
 		if (listu.size() > 0) {
-			appBo.runSQL("update sh_masterdata set content='" + jsonData + "' where zjbh='" + zjbhs + "'");
-		} else {
-			/**
-			 * 解析jsondata获取用户ID
-			 * 
-			 */
-			String userid = "15811137696";
-			List list1 = appBo.query("select max(id) id from sh_onlinedata");
-			Map map = (Map) list1.get(0);
-			int id = 0;
-			if (map.get("id") != null) {
-				id = Integer.valueOf(map.get("id").toString());
-			} else {
-				id = 0;
-			}
-			appBo.runSQL("INSERT INTO sh_masterdata VALUES ('" + (id + 1) + "','" + userid + "','" + zjbhs + "','"
-					+ jsonData + "','0','','')");
-		}
+			List listu1 = appBo.query("select id from sh_masterdata where user_code='" + userid + "' and zjbh='"+zjbhs+"'");
+			//appBo.runSQL("update sh_masterdata set user_code='" + userid + "' where zjbh='" + zjbhs + "'");
+		if(listu1.size()>0){}else{
+			appBo.runSQL("update sh_masterdata set user_code='" + userid + "' where zjbh='" + zjbhs + "'");	
+		}}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Map map = null;
 		List list1 = appBo.query("select * from sh_onlinedata where zjbh='" + zjbhs + "'");
@@ -102,13 +118,10 @@ public class DataUtil {
 		} else {
 			mm = 9999;
 		}
-		map.put("second", mm);
-		System.out.println(mm + "--------------------mm");
+		map.put("second", mm);	
 		return map;
 	}
-
 	public static String getUUID() {
-
 		return UUID.randomUUID().toString().replace("-", "");
 	}
 public String ControllerDevice(Map mapm,String user_code,String device_code,String status){
