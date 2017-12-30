@@ -46,7 +46,7 @@ for(User user:list){
 	map1.put("code", "2323");
 	map1.put("names", "23432");
 	list.add(map1);
-    //测试提交git1
+    //测试提交git12
 	map.put("data", list);
 		System.out.println("===="+JSONObject.fromObject(map));
 	
