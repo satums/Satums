@@ -122,12 +122,12 @@ public class QueryLink implements AppService {
 				List<Map<String, Object>> resDeviceList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的设备list
 				if (deviceList != null && deviceList.size() > 0) {
 					for (Map<String, Object> deviceMap : deviceList) {
-						Map<String, Object> resVirMap = new HashMap<>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list里的单个条件map
-						resVirMap.put("deviceId", deviceMap.get("id"));
-						resVirMap.put("deviceName", deviceMap.get("device_name"));// 设备名称
-						resVirMap.put("deviceStatus", deviceMap.get("device_status"));// 设备状态
-						resVirMap.put("deviceContime", deviceMap.get("device_contime"));// 设备控制时间
-						resDeviceList.add(resVirMap);
+						Map<String, Object> resDeviceMap = new HashMap<>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list里的单个设备map
+						resDeviceMap.put("deviceId", deviceMap.get("id"));
+						resDeviceMap.put("deviceName", deviceMap.get("device_name"));// 设备名称
+						resDeviceMap.put("deviceStatus", deviceMap.get("device_status"));// 设备状态
+						resDeviceMap.put("deviceContime", deviceMap.get("device_contime"));// 设备控制时间
+						resDeviceList.add(resDeviceMap);
 					}
 				}
 				resLinkMap.put("deviceList", resDeviceList);// 返回的单个联动里所有的设备list
