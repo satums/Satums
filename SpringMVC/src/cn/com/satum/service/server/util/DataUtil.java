@@ -200,7 +200,6 @@ public String ControllerScene(Map mapm,String user_code,String scene_code,String
 		}
 		Map mapd=new HashMap();
 	
-
 	}else{
 		flag="E";
 		msg="Çå¾»²»´æÔÚ";
