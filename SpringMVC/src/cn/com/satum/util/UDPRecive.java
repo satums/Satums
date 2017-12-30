@@ -14,7 +14,6 @@ package cn.com.satum.util;
 	    }
 	    public void Init()
 	    {
-
 	        try
 	        { 
 	            //¼àÌı¶Ë¿ÚÉèÎª1234
