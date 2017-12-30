@@ -192,8 +192,7 @@ public String ControllerScene(Map mapm,String user_code,String scene_code,String
 				map.put("device", listds);
 			}else if(listd.size()<1&&listl.size()>0){
 				
-			}else{
-				
+			}else{			
 			}
 		}else{
 			flag="E";
