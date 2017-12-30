@@ -20,6 +20,7 @@ import javax.servlet.ServletResponse;
 
 import cn.com.satum.service.server.util.DataUtil;
 import cn.com.satum.util.HEX2And16;
+import cn.com.satum.util.UDPRecive;
 public class InitListener implements ServletContextListener { 
 public void contextDestroyed(ServletContextEvent context) {  
     
@@ -33,7 +34,7 @@ public void contextInitialized(ServletContextEvent context) {
     // 上下文初始化执行  
 	System.out.println("接收服务启动，IP为本机IP，端口8049。。。");	
 	 Runnable runnable = new Runnable() {  
-         public void run() {  
+         public void run() {         	 
              // task to run goes here  
         	 String str_send =new HEX2And16().hex16tTo2("S");  
              byte[] buf = new byte[1024];  
@@ -57,8 +58,7 @@ public void contextInitialized(ServletContextEvent context) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
         		}  
-                 System.out.println("server received data from client：");
-                 
+                 System.out.println("server received data from client：");     
                  String str_receive = new String(dp_receive.getData(),0,dp_receive.getLength()) +   
                          " from " + dp_receive.getAddress().getHostAddress() + ":" + dp_receive.getPort(); 
                  String data=dp_receive.getData().toString();
@@ -66,8 +66,8 @@ public void contextInitialized(ServletContextEvent context) {
                  int port=dp_receive.getPort();
                  System.out.println(str_receive);
                  str_send=new HEX2And16().hex16tTo2(new DataUtil().dataParse(data,IP,port));
-                 //String str_send="收到。。。。。。。。。。";
-                 //数据发动到客户端的3000端口  
+              
+                 //接收数据返回接收的状态
                  DatagramPacket dp_send= new DatagramPacket(str_send.getBytes(),str_send.length(),dp_receive.getAddress(),8049);  
                  try {
         			ds.send(dp_send);
@@ -86,12 +86,7 @@ public void contextInitialized(ServletContextEvent context) {
      ScheduledExecutorService service = Executors  
              .newSingleThreadScheduledExecutor();  
      // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间  
-     service.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.SECONDS);  
-	
-	
-	
-	
-	 
+     service.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.SECONDS);  	 
 }
 }  
 
