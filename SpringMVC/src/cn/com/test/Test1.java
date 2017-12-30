@@ -1,8 +1,12 @@
 package cn.com.test;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,9 +39,16 @@ for(User user:list){
 	System.out.println(user.getCode()+"===="+user.getUsername());
 }
 **/
-		String sql="select * from ou_department";
-		List list=bo.query(sql);
-		System.out.println("===="+list);
+	List list=new ArrayList();
+	Map map=new HashMap();
+	map.put("name", "name");
+	Map map1=new HashMap();
+	map1.put("code", "2323");
+	map1.put("names", "23432");
+	list.add(map1);
+	
+	map.put("data", list);
+		System.out.println("===="+JSONObject.fromObject(map));
 	
 	}
 }
