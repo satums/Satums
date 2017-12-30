@@ -22,8 +22,8 @@ public class QueryLink implements AppService {
 
 		Map<String, Object> reqMap = JSON.parseObject(jsondata);
 
-		String userID = (String) reqMap.get("userCode");
-		if (StringUtils.isBlank(userID)) {
+		String userCode = (String) reqMap.get("userCode");
+		if (StringUtils.isBlank(userCode)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "获取不到用户信息！");
 			JSONObject json = new JSONObject(resMap);
@@ -34,7 +34,7 @@ public class QueryLink implements AppService {
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> linkList = AppBo
 				.query("SELECT scl.id,scl.link_code,scl.link_name,scl.link_status FROM sh_common_link scl WHERE scl.is_del='2' AND scl.user_code="
-						+ userID);
+						+ userCode);
 		// 所有的联动
 		if (linkList != null && linkList.size() > 0) {
 			for (Map<String, Object> linkMap : linkList) {
