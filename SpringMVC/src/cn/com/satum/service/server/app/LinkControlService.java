@@ -310,7 +310,7 @@ public class LinkControlService implements AppService {
 						deviceContime = (String) deviceMap.get("deviceContime");
 					}
 
-					AppBo.runSQL("UPDATE sh_link_devicesub SET device_status='" + deviceStatus + "',device_contime='"
+					AppBo.runSQL("UPDATE sh_link_devicesub SET device_status = '" + deviceStatus + "',device_contime='"
 							+ deviceContime + "' where id='" + deviceId + "'");
 
 				}
