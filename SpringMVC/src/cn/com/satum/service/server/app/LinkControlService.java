@@ -175,6 +175,7 @@ public class LinkControlService implements AppService {
 	public String updateLike(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
+		
 		String linkCode = (String) reqMap.get("LinkCode");
 		if (StringUtils.isBlank(linkCode)) {
 			resMap.put("result", "E");
