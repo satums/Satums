@@ -30,7 +30,6 @@ package cn.com.satum.util;
 	               System.out.println(recv_string);
 	               
 	              }
-
 	        }
 	        catch(Exception e)
 	        {
