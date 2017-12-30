@@ -42,7 +42,7 @@ public class LinkControlService implements AppService {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 
-		String userCode = (String) reqMap.get("userId");
+		String userCode = (String) reqMap.get("userCode");
 
 		String linkName = (String) reqMap.get("linkName");
 		if (StringUtils.isBlank(linkName)) {
