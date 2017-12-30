@@ -175,6 +175,7 @@ public class LinkControlService implements AppService {
 	public String updateLike(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
+
 		String linkCode = (String) reqMap.get("LinkCode");
 		if (StringUtils.isBlank(linkCode)) {
 			resMap.put("result", "E");
@@ -182,7 +183,6 @@ public class LinkControlService implements AppService {
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
-
 		// 修改联动主表
 		String linkName = (String) reqMap.get("linkName");
 		if (StringUtils.isNotBlank(linkName)) {
