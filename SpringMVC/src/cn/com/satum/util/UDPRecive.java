@@ -37,7 +37,6 @@ package cn.com.satum.util;
 	        }
 
 	    }
-
 	    public static void main(String args[])
 	    {
 	        new UDPRecive();
