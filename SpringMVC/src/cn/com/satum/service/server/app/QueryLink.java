@@ -22,7 +22,7 @@ public class QueryLink implements AppService {
 
 		Map<String, Object> reqMap = JSON.parseObject(jsondata);
 
-		String userID = (String) reqMap.get("userId");
+		String userID = (String) reqMap.get("userCode");
 		if (StringUtils.isBlank(userID)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "获取不到用户信息！");
