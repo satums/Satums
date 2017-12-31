@@ -1,5 +1,6 @@
 package cn.com.satum.service.server.app;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,11 @@ import com.alibaba.fastjson.JSONObject;
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.service.server.util.DataUtil;
 
+/**
+ * @author yxb
+ * 
+ *         联动增、删、改
+ */
 public class LinkControlService implements AppService {
 
 	@Override
@@ -20,11 +26,13 @@ public class LinkControlService implements AppService {
 		String reqType = (String) reqMap.get("reqType");
 		String resStr = "";
 		if ("add".equals(reqType)) {
-			resStr = addLike(reqMap);// 添加联动
+			resStr = addLink(reqMap);// 添加联动
 		} else if ("update".equals(reqType)) {
-			resStr = updateLike(reqMap);// 修改联动
+			resStr = updateLink(reqMap);// 修改联动
 		} else if ("delete".equals(reqType)) {
-			resStr = deleteLike(reqMap);// 删除联动
+			resStr = deleteLink(reqMap);// 删除联动
+		} else if ("query".equals(reqType)) {
+			resStr = queryLink(reqMap);// 删除联动
 		}
 
 		return resStr;
@@ -36,7 +44,7 @@ public class LinkControlService implements AppService {
 	 * @param reqMap
 	 * @return
 	 */
-	public String addLike(Map<String, Object> reqMap) {
+	public String addLink(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 
@@ -60,58 +68,31 @@ public class LinkControlService implements AppService {
 		List<Map<String, Object>> virList = (List<Map<String, Object>>) reqMap.get("virList");// 获取所有的联动条件
 		if (virList != null && virList.size() > 0) {
 			for (Map<String, Object> virMap : virList) {
-				String virName = (String) virMap.get("virName");// 条件名称
-				String virCode = "";// 条件code
-				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> linkDicList = AppBo
-						.query("SELECT sld.`code` from sh_link_dic sld where sld.`name`=" + virName);// 查联动条件字典表查询条件code
-				if (linkDicList != null && linkDicList.size() > 0) {
-					virCode = (String) linkDicList.get(0).get("code");
-				}
+				String virName = (String) virMap.get("envirCode");// 条件名称
+				String envirCode = (String) virMap.get("envirCode");// 条件code
+				// @SuppressWarnings("unchecked")
+				// List<Map<String, Object>> linkDicList = AppBo
+				// .query("SELECT sld.`code` from sh_link_dic sld where
+				// sld.`name`=" + virName);// 查联动条件字典表查询条件code
+				// if (linkDicList != null && linkDicList.size() > 0) {
+				// virCode = (String) linkDicList.get(0).get("code");
+				// }
 				String virType = (String) virMap.get("virType");// 条件类型（0：变为；1：此时正好）
 				String virContent = (String) virMap.get("virContent");// 条件内容
 				@SuppressWarnings("unchecked")
 				Map<String, Object> virParamMap = (Map<String, Object>) virMap.get("virParam");// 条件参数
 				String virParam = "";// 存进数据库的条件参数格式
 				// 根据条件code获取条件具体参数，条件不同参数就不同
-				if ("time".equals(virCode)) {// 时间
+				if ("time".equals(envirCode)) {// 时间
 					String startTime = (String) virParamMap.get("startTime");// 开始时间
 					String endTime = (String) virParamMap.get("endTime");// 结束时间
 					String days = (String) virParamMap.get("days");// 周几
 					virParam = startTime + "-" + endTime + " " + days;
 				}
 
-				if ("temp".equals(virCode)) {// 温度
-					String lowTemp = (String) virParamMap.get("lowTemp");// 低温
-					String highTemp = (String) virParamMap.get("highTemp");// 高温
-					virParam = lowTemp + " " + highTemp;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowTemp + "',param_high='" + highTemp
-							+ "' where `code`='" + virCode + "'");
-				}
-				if ("damp".equals(virCode)) {// 湿度
-					String lowDamp = (String) virParamMap.get("lowDamp");// 低点
-					String highDamp = (String) virParamMap.get("highDamp");// 高点
-					virParam = lowDamp + " " + highDamp;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowDamp + "',param_high='" + highDamp
-							+ "' where `code`='" + virCode + "'");
-				}
-				if ("illu".equals(virCode)) {// 光照度
-					String lowIllu = (String) virParamMap.get("lowIllu");// 低点
-					String highIllu = (String) virParamMap.get("highIllu");// 高点
-					virParam = lowIllu + " " + highIllu;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowIllu + "',param_high='" + highIllu
-							+ "' where `code`='" + virCode + "'");
-				}
-				if ("trig".equals(virCode)) {// 触发
-					String seconds = (String) virParamMap.get("seconds");// 秒数
-					virParam = seconds;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + seconds + "',param_high='" + seconds
-							+ "' where `code`='" + virCode + "'");
-				}
-
 				AppBo.runSQL(
 						"INSERT INTO sh_link_virsub (id,link_code,vir_code,vir_type,vir_content,vir_param) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + virCode + "','" + virType + "','"
+								+ DataUtil.getUUID() + "','" + linkCode + "','" + envirCode + "','" + virType + "','"
 								+ virContent + "','" + virParam + "')");
 			}
 
@@ -142,15 +123,16 @@ public class LinkControlService implements AppService {
 		List<Map<String, Object>> sceneList = (List<Map<String, Object>>) reqMap.get("sceneList");// 获取所有在当前联动的情景列表
 		if (sceneList != null && sceneList.size() > 0) {
 			for (Map<String, Object> sceneMap : sceneList) {
+
 				String sceneName = (String) sceneMap.get("sceneName");// 情景名称
 				String sceneCode = (String) sceneMap.get("sceneCode");// 情景code
-				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
+				// String sceneStatus = (String) sceneMap.get("sceneStatus");//
+				// 状态
 				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
 
-				AppBo.runSQL(
-						"INSERT INTO sh_link_devicesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
-								+ sceneStatus + "','" + sceneContime + "')");
+				AppBo.runSQL("INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_contime) VALUES ('"
+						+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
+						+ sceneContime + "')");
 			}
 		}
 		if (deviceList.size() == 0 && sceneList.size() == 0) {
@@ -170,10 +152,10 @@ public class LinkControlService implements AppService {
 	 * 修改联动
 	 */
 
-	public String updateLike(Map<String, Object> reqMap) {
+	public String updateLink(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
-		String linkCode = (String) reqMap.get("LinkCode");
+		String linkCode = (String) reqMap.get("linkCode");
 		if (StringUtils.isBlank(linkCode)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "获取不到要修改的联动信息！");
@@ -200,7 +182,7 @@ public class LinkControlService implements AppService {
 						List<Map<String, Object>> virIdList = AppBo
 								.query("SELECT slv.vir_code,slv.vir_type,slv.vir_content,slv.vir_param FROM sh_link_virsub slv where slv.id='"
 										+ virId + "'");
-						String virCode = (String) virIdList.get(0).get("vir_code");// 根据条件id获取条件code
+						String envirCode = (String) virIdList.get(0).get("vir_code");// 根据条件id获取条件code
 						String virType = (String) virIdList.get(0).get("vir_type");// 根据条件id获取条件类型
 						String virContent = (String) virIdList.get(0).get("vir_content");// 根据条件id获取条件内容
 						String virParam = (String) virIdList.get(0).get("vir_param");// 根据条件id获取条件参数
@@ -215,7 +197,7 @@ public class LinkControlService implements AppService {
 						Map<String, Object> virParamMap = (Map<String, Object>) virMap.get("virParam");// 条件参数
 						if (!virParamMap.isEmpty()) {
 							// 根据条件code获取条件具体参数，条件不同参数就不同
-							if ("time".equals(virCode)) {// 时间
+							if ("time".equals(envirCode)) {// 时间
 								String startTime = (String) virParamMap.get("startTime");// 开始时间
 								if (StringUtils.isNotBlank(startTime)) {
 									virParam.replace(virParam.substring(0, virParam.lastIndexOf("-")), startTime);
@@ -232,61 +214,28 @@ public class LinkControlService implements AppService {
 											days);
 								}
 							}
+							@SuppressWarnings("unchecked")
+							List<Map<String, Object>> envirList = AppBo
+									.query("SELECT envir_name,starts,ends FROM sh_common_envir where envir_code='"
+											+ envirCode + "'");
+							String starts = (String) envirList.get(0).get("starts");
+							String ends = (String) envirList.get(0).get("ends");
 
-							if ("temp".equals(virCode)) {// 温度
-								String lowTemp = (String) virParamMap.get("lowTemp");// 低温
-								if (StringUtils.isNotBlank(lowTemp)) {
-									virParam.replace(virParam.substring(0, virParam.indexOf(" ")), lowTemp);
-								}
-								String highTemp = (String) virParamMap.get("highTemp");// 高温
-								if (StringUtils.isNotBlank(lowTemp)) {
-									virParam.replace(virParam.substring(virParam.indexOf(" ") + 1, virParam.length()),
-											highTemp);
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowTemp + "',param_high='"
-										+ highTemp + "' where `code`='" + virCode + "'");
+							if (StringUtils.isNotBlank((String) virParamMap.get("starts"))) {
+								starts = (String) virParamMap.get("starts");
 							}
-							if ("damp".equals(virCode)) {// 湿度
-								String lowDamp = (String) virParamMap.get("lowDamp");// 低点
-								if (StringUtils.isNotBlank(lowDamp)) {
-									virParam.replace(virParam.substring(0, virParam.indexOf(" ")), lowDamp);
-								}
-								String highDamp = (String) virParamMap.get("highDamp");// 高点
-								if (StringUtils.isNotBlank(highDamp)) {
-									virParam.replace(virParam.substring(virParam.indexOf(" ") + 1, virParam.length()),
-											highDamp);
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowDamp + "',param_high='"
-										+ highDamp + "' where `code`='" + virCode + "'");
+							if (StringUtils.isNotBlank((String) virParamMap.get("ends"))) {
+								ends = (String) virParamMap.get("ends");
 							}
-							if ("illu".equals(virCode)) {// 光照度
-								String lowIllu = (String) virParamMap.get("lowIllu");// 低点
-								if (StringUtils.isNotBlank(lowIllu)) {
-									virParam.replace(virParam.substring(0, virParam.indexOf(" ")), lowIllu);
-								}
-								String highIllu = (String) virParamMap.get("highIllu");// 高点
-								if (StringUtils.isNotBlank(highIllu)) {
-									virParam.replace(virParam.substring(virParam.indexOf(" ") + 1, virParam.length()),
-											highIllu);
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowIllu + "',param_high='"
-										+ highIllu + "' where `code`='" + virCode + "'");
-							}
-							if ("trig".equals(virCode)) {// 触发
-								String seconds = (String) virParamMap.get("seconds");// 秒数
-								if (StringUtils.isNotBlank(seconds)) {
-									virParam = seconds;
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + seconds + "',param_high='" + seconds
-										+ "' where `code`='" + virCode + "'");
-							}
+							AppBo.runSQL("UPDATE sh_common_envir SET ends='" + ends + "',starts='" + starts
+									+ "' where envir_code='" + envirCode + "'");
 						}
 
 						AppBo.runSQL("UPDATE sh_link_virsub SET vir_type='" + virType + "',vir_content='" + virContent
 								+ "',vir_param='" + virParam + "' where id='" + virId + "'");
 					} else if ("del".equals(conVirType)) {
 						// 删除联动条件子表
-						AppBo.runSQL("DELETE FROM sh_link_virsub WHERE id='" + virId + "'");
+						AppBo.runSQL("UPDATE sh_link_virsub SET is_del='1' WHERE id='" + virId + "'");
 					}
 
 				}
@@ -321,7 +270,7 @@ public class LinkControlService implements AppService {
 								+ "',device_contime='" + deviceContime + "' where id='" + deviceId + "'");
 					} else if ("del".equals(conDeviceType)) {
 						// 删除联动设备子表
-						AppBo.runSQL("DELETE FROM sh_link_devicesub WHERE id='" + deviceId + "'");
+						AppBo.runSQL("UPDATE sh_link_devicesub SET is_del='1' WHERE id='" + deviceId + "'");
 					}
 
 				}
@@ -352,18 +301,9 @@ public class LinkControlService implements AppService {
 								+ sceneContime + "' where id='" + sceneId + "'");
 					} else if ("del".equals(conSceneType)) {
 						// 删除联动情景子表
-						AppBo.runSQL("DELETE FROM sh_link_scenesub WHERE id='" + sceneId + "'");
+						AppBo.runSQL("UPDATE sh_link_scenesub SET is_del='1' WHERE id='" + sceneId + "'");
 					}
 				}
-				String sceneName = (String) sceneMap.get("sceneName");// 情景名称
-				String sceneCode = (String) sceneMap.get("sceneCode");// 情景code
-				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
-				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
-
-				AppBo.runSQL(
-						"INSERT INTO sh_link_devicesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
-								+ sceneStatus + "','" + sceneContime + "')");
 			}
 		}
 		resMap.put("result", "S");
@@ -371,30 +311,172 @@ public class LinkControlService implements AppService {
 		JSONObject json = new JSONObject(resMap);
 		return json.toString();
 	}
+
 	/**
 	 * 删除联动
 	 * 
 	 * @param reqMap
 	 * @return
 	 */
-	public String deleteLike(Map<String, Object> reqMap) {
+	public String deleteLink(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 
 		String linkCode = (String) reqMap.get("linkCode");
 		// 删除联动条件子表
-		AppBo.runSQL("DELETE FROM sh_link_virsub WHERE link_code='" + linkCode + "'");
+		AppBo.runSQL("UPDATE sh_link_virsub SET is_del='1' WHERE link_code='" + linkCode + "'");
 		// 删除联动设备子表
-		AppBo.runSQL("DELETE FROM sh_link_devicesub WHERE link_code='" + linkCode + "'");
+		AppBo.runSQL("UPDATE sh_link_devicesub SET is_del='1' WHERE link_code='" + linkCode + "'");
 		// 删除联动情景子表
-		AppBo.runSQL("DELETE FROM sh_link_scenesub WHERE link_code='" + linkCode + "'");
+		AppBo.runSQL("UPDATE sh_link_scenesub SET is_del='1' WHERE link_code='" + linkCode + "'");
 		// 删除联动主表
-		AppBo.runSQL("DELETE FROM sh_common_link WHERE link_code='" + linkCode + "'");
+		AppBo.runSQL("UPDATE sh_common_link SET is_del='1' WHERE link_code='" + linkCode + "'");
 		resMap.put("result", "S");
 		resMap.put("msg", "联动删除成功！");
 		JSONObject json = new JSONObject(resMap);
-		//ceshi
 		return json.toString();
-	
+
+	}
+
+	/**
+	 * 查询联动
+	 * 
+	 * @param reqMap
+	 * @return
+	 */
+	public String queryLink(Map<String, Object> reqMap) {
+
+		Map<String, Object> resMap = new HashMap<String, Object>();// 接口最终返回数据的map
+		List<Map<String, Object>> resDataList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list
+
+		String userCode = (String) reqMap.get("userCode");
+		if (StringUtils.isBlank(userCode)) {
+			resMap.put("result", "E");
+			resMap.put("msg", "获取不到用户信息！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
+
+		// 根据用户id查询联动主表
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> linkList = AppBo
+				.query("SELECT scl.id,scl.link_code,scl.link_name,scl.link_status FROM sh_common_link scl WHERE scl.is_del='2' AND scl.user_code="
+						+ userCode);
+		// 所有的联动
+		if (linkList != null && linkList.size() > 0) {
+			for (Map<String, Object> linkMap : linkList) {
+				Map<String, Object> resLinkMap = new HashMap<String, Object>();// 接口最终返回数据的map里的联动list的单个联动map
+				// 单个联动
+				String linkCode = (String) linkMap.get("link_code");// 联动code
+				String linkName = (String) linkMap.get("link_name");// 联动名称
+				String linkStatus = (String) linkMap.get("link_status");// 联动状态1：关闭；2：打开
+
+				resLinkMap.put("linkCode", linkCode);
+				resLinkMap.put("linkName", linkName);
+				resLinkMap.put("linkStatus", linkStatus);
+
+				// 根据联动code查询联动条件子表
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> virList = AppBo
+						.query("SELECT slv.id,slv.vir_code,slv.vir_type,slv.vir_content,slv.vir_param FROM sh_link_virsub slv WHERE is_del='2' and slv.link_code='"
+								+ linkCode + "'");
+				// 单个联动里面所有的条件
+				List<Map<String, Object>> resVirList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list
+				if (virList != null && virList.size() > 0) {
+					for (Map<String, Object> virMap : virList) {
+						Map<String, Object> resVirMap = new HashMap<>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list里的单个条件map
+						String virId = (String) virMap.get("id");// 条件id
+						String virType = (String) virMap.get("vir_type");// 条件类型
+						String virContent = (String) virMap.get("vir_content");// 条件内容
+						String virParam = (String) virMap.get("vir_param");// 条件参数（只在code为time的情况用到）
+						String envirCode = (String) virMap.get("vir_code");// 条件code
+
+						resVirMap.put("virId", virId);
+						resVirMap.put("virType", virType);
+						resVirMap.put("virContent", virContent);
+
+						// 根据条件code查询条件字典表的条件名称、条件参数（code为time的条件除外，参数在条件表存储）
+						@SuppressWarnings("unchecked")
+						List<Map<String, Object>> envirList = AppBo
+								.query("SELECT envir_name,starts,ends FROM sh_common_envir  WHERE envir_code='"
+										+ envirCode + "'");
+						Map<String, Object> envirMap = envirList.get(0);
+						String envirName = (String) envirMap.get("envir_name");
+						resVirMap.put("envirName", envirName);
+
+						if ("time".equals(envirCode)) {// 时间
+							String startTime = virParam.substring(0, virParam.lastIndexOf("-"));
+							String endTime = virParam.substring(virParam.lastIndexOf("-") + 1, virParam.indexOf(" "));
+							String days = virParam.substring(virParam.indexOf(" ") + 1, virParam.length());
+							resVirMap.put("startTime", startTime);// 开始时间
+							resVirMap.put("endTime", endTime);// 结束时间
+							resVirMap.put("days", days);// 周几（以“，”分割的字符串）
+
+						} else {
+							String starts = (String) envirMap.get("starts");
+							String ends = (String) envirMap.get("ends");
+							resVirMap.put("starts", starts);
+							resVirMap.put("ends", ends);
+						}
+
+						resVirList.add(resVirMap);
+					}
+				}
+				resLinkMap.put("virList", resVirList);// 返回单个联动里所有的条件list
+
+				// 根据联动code查询联动设备子表
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> deviceList = AppBo
+						.query("SELECT sld.id,sld.device_name,sld.device_status,sld.device_contime FROM sh_link_devicesub sld where is_del='2' and sld.link_code='"
+								+ linkCode + "'");
+				// 单个联动里面所有的设备
+				List<Map<String, Object>> resDeviceList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的设备list
+				if (deviceList != null && deviceList.size() > 0) {
+					for (Map<String, Object> deviceMap : deviceList) {
+						Map<String, Object> resDeviceMap = new HashMap<>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list里的单个设备map
+						resDeviceMap.put("deviceId", deviceMap.get("id"));
+						resDeviceMap.put("deviceName", deviceMap.get("device_name"));// 设备名称
+						resDeviceMap.put("deviceStatus", deviceMap.get("device_status"));// 设备状态
+						resDeviceMap.put("deviceContime", deviceMap.get("device_contime"));// 设备控制时间
+						resDeviceList.add(resDeviceMap);
+					}
+				}
+				resLinkMap.put("deviceList", resDeviceList);// 返回的单个联动里所有的设备list
+
+				// 根据联动code查询联动情景子表
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> sceneList = AppBo
+						.query("SELECT sls.id,sls.scene_name,sls.scene_status,sls.scene_contime FROM sh_link_scenesub sls where is_del='2' and sls.link_code='"
+								+ linkCode + "'");
+				// 单个联动里面所有的情景
+				List<Map<String, Object>> resSceneList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的情景list
+				if (sceneList != null && sceneList.size() > 0) {
+					for (Map<String, Object> sceneMap : sceneList) {
+						Map<String, Object> resSceneMap = new HashMap<>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list里的单个条件map
+						resSceneMap.put("sceneId", sceneMap.get("id"));
+						resSceneMap.put("sceneName", sceneMap.get("scene_name"));// 情景名称
+						resSceneMap.put("sceneStatus", sceneMap.get("scene_status"));// 情景状态
+						resSceneMap.put("sceneContime", sceneMap.get("scene_contime"));// 情景控制时间
+						resSceneList.add(resSceneMap);
+					}
+				}
+				resLinkMap.put("resSceneList", resSceneList);// 返回的单个联动里所有的情景list
+
+				resDataList.add(resLinkMap);
+			}
+
+		} else {
+			resMap.put("result", "S");
+			resMap.put("msg", "该用户没有添加联动！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
+
+		resMap.put("result", "S");
+		resMap.put("msg", "获取联动列表成功！");
+		resMap.put("data", resDataList);
+		JSONObject json = new JSONObject(resMap);
+		return json.toString();
+
 	}
 }
