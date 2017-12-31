@@ -1,6 +1,5 @@
 package cn.com.satum.service.server.app;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +61,16 @@ public class VirControlService implements AppService {
 			return json.toString();
 		}
 
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> envirList = AppBo
+				.query("SELECT envir_name,starts,ends FROM sh_common_envir where envir_name='" + envirName + "'");
+		if (envirList.size() > 0) {
+			resMap.put("result", "E");
+			resMap.put("msg", "该类型名称已存在！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
+
 		// 插入环境条件表
 		String envirCode = DataUtil.getUUID();
 
@@ -99,7 +108,17 @@ public class VirControlService implements AppService {
 
 		if (StringUtils.isNotBlank((String) reqMap.get("envirName"))) {
 			envirName = (String) reqMap.get("envirName");
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> envirNameList = AppBo
+					.query("SELECT envir_name,starts,ends FROM sh_common_envir where envir_name='" + envirName + "'");
+			if (envirNameList.size() > 0) {
+				resMap.put("result", "E");
+				resMap.put("msg", "该类型名称已存在！");
+				JSONObject json = new JSONObject(resMap);
+				return json.toString();
+			}
 		}
+		
 		if (StringUtils.isNotBlank((String) reqMap.get("starts"))) {
 			starts = (String) reqMap.get("starts");
 		}
