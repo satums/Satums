@@ -111,7 +111,7 @@ public class VirControlService implements AppService {
 				+ "' where envir_code='" + envirCode + "'");
 
 		resMap.put("result", "S");
-		resMap.put("msg", "联动修改成功！");
+		resMap.put("msg", "环境条件修改成功！");
 		JSONObject json = new JSONObject(resMap);
 		return json.toString();
 	}
@@ -145,7 +145,6 @@ public class VirControlService implements AppService {
 	public String queryEnvir(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();// 接口最终返回数据的map
-		List<Map<String, Object>> resDataList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的list
 
 		String userCode = (String) reqMap.get("userCode");
 		if (StringUtils.isBlank(userCode)) {
@@ -157,13 +156,13 @@ public class VirControlService implements AppService {
 
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> envirList = AppBo
-				.query("SELECT sce.user_code,sce.envir_code,sce.envir_name,sce.device_code,sce.device_name,sce.`starts`,sce.`ends` FROM sh_common_envir sce where sce.user_code='"
+				.query("SELECT sce.user_code,sce.envir_code,sce.envir_name,sce.device_code,sce.device_name,sce.`starts`,sce.`ends` FROM sh_common_envir sce where sce.is_del='2' and sce.user_code='"
 						+ userCode + "'");
 
 		if (envirList != null && envirList.size() > 0) {
 			resMap.put("result", "S");
 			resMap.put("msg", "获取环境条件列表成功！");
-			resMap.put("data", resDataList);
+			resMap.put("data", envirList);
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		} else {
