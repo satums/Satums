@@ -130,7 +130,7 @@ public class LinkControlService implements AppService {
 				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
 
 				AppBo.runSQL(
-						"INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
+						"INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_contime) VALUES ('"
 								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','" + sceneContime + "')");
 			}
 		}
