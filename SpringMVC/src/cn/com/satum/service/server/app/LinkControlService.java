@@ -123,15 +123,16 @@ public class LinkControlService implements AppService {
 		List<Map<String, Object>> sceneList = (List<Map<String, Object>>) reqMap.get("sceneList");// 获取所有在当前联动的情景列表
 		if (sceneList != null && sceneList.size() > 0) {
 			for (Map<String, Object> sceneMap : sceneList) {
-				
+
 				String sceneName = (String) sceneMap.get("sceneName");// 情景名称
 				String sceneCode = (String) sceneMap.get("sceneCode");// 情景code
-//				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
+				// String sceneStatus = (String) sceneMap.get("sceneStatus");//
+				// 状态
 				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
 
-				AppBo.runSQL(
-						"INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_contime) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','" + sceneContime + "')");
+				AppBo.runSQL("INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_contime) VALUES ('"
+						+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
+						+ sceneContime + "')");
 			}
 		}
 		if (deviceList.size() == 0 && sceneList.size() == 0) {
@@ -154,7 +155,7 @@ public class LinkControlService implements AppService {
 	public String updateLink(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
-		String linkCode = (String) reqMap.get("LinkCode");
+		String linkCode = (String) reqMap.get("linkCode");
 		if (StringUtils.isBlank(linkCode)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "获取不到要修改的联动信息！");
@@ -459,7 +460,7 @@ public class LinkControlService implements AppService {
 						resSceneList.add(resSceneMap);
 					}
 				}
-				resLinkMap.put("deviceList", resSceneList);// 返回的单个联动里所有的情景list
+				resLinkMap.put("resSceneList", resSceneList);// 返回的单个联动里所有的情景list
 
 				resDataList.add(resLinkMap);
 			}
