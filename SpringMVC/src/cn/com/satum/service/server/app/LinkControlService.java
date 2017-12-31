@@ -123,6 +123,7 @@ public class LinkControlService implements AppService {
 		List<Map<String, Object>> sceneList = (List<Map<String, Object>>) reqMap.get("sceneList");// 获取所有在当前联动的情景列表
 		if (sceneList != null && sceneList.size() > 0) {
 			for (Map<String, Object> sceneMap : sceneList) {
+				
 				String sceneName = (String) sceneMap.get("sceneName");// 情景名称
 				String sceneCode = (String) sceneMap.get("sceneCode");// 情景code
 //				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
