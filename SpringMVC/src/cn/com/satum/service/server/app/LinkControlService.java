@@ -125,13 +125,12 @@ public class LinkControlService implements AppService {
 			for (Map<String, Object> sceneMap : sceneList) {
 				String sceneName = (String) sceneMap.get("sceneName");// 情景名称
 				String sceneCode = (String) sceneMap.get("sceneCode");// 情景code
-				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
+//				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
 				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
 
 				AppBo.runSQL(
 						"INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
-								+ sceneStatus + "','" + sceneContime + "')");
+								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','" + sceneContime + "')");
 			}
 		}
 		if (deviceList.size() == 0 && sceneList.size() == 0) {
