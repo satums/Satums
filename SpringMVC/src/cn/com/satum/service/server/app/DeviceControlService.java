@@ -3,18 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
-
-
-
-
-
-
-import net.sf.json.JSONArray;
-
 import org.apache.commons.lang.StringUtils;
-import org.jboss.mx.util.ObservedObject;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -160,9 +149,28 @@ public class DeviceControlService implements AppService {
 		String id = (String) reqMap.get("id");
 		String name = (String) reqMap.get("name");
 		
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> deviceList = AppBo
+				.query("SELECT id,name FROM sh_device WHERE is_del='2' AND id='"
+						+ id + "' ");
+		
+		if (deviceList.size()==0)  {
+			resMap.put("result", "S");
+			resMap.put("msg", "未查询到设备！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
+		
 		if (StringUtils.isNotBlank(name)) {
 			AppBo.runSQL("UPDATE sh_device SET name = '" + name + "' WHERE is_del='2' AND id='" + id + "' AND user_code='" + userCode + "'");
 		}
+		else{
+			resMap.put("result", "S");
+			resMap.put("msg", "设备名称为空！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
+		
 		
 		resMap.put("result", "S");
 		resMap.put("msg", "设备修改成功！");
