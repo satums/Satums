@@ -119,7 +119,7 @@ public class DeviceControlService implements AppService {
 			
 			AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code) values "
 					+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"')");
-		}
+		} 
 		
 		
 		resMap.put("result", "S");
