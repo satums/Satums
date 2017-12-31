@@ -378,7 +378,7 @@ public class LinkControlService implements AppService {
 				// 根据联动code查询联动条件子表
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> virList = AppBo
-						.query("SELECT slv.id,slv.vir_code,slv.vir_type,slv.vir_content,slv.vir_param FROM sh_link_virsub slv WHERE slv.link_code='"
+						.query("SELECT slv.id,slv.vir_code,slv.vir_type,slv.vir_content,slv.vir_param FROM sh_link_virsub slv WHERE is_del='2' slv.link_code='"
 								+ linkCode + "'");
 				// 单个联动里面所有的条件
 				List<Map<String, Object>> resVirList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的条件list
@@ -427,7 +427,7 @@ public class LinkControlService implements AppService {
 				// 根据联动code查询联动设备子表
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> deviceList = AppBo
-						.query("SELECT sld.id,sld.device_name,sld.device_status,sld.device_contime FROM sh_link_devicesub sld where sld.link_code='"
+						.query("SELECT sld.id,sld.device_name,sld.device_status,sld.device_contime FROM sh_link_devicesub sld where is_del='2' sld.link_code='"
 								+ linkCode + "'");
 				// 单个联动里面所有的设备
 				List<Map<String, Object>> resDeviceList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的设备list
@@ -446,7 +446,7 @@ public class LinkControlService implements AppService {
 				// 根据联动code查询联动情景子表
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> sceneList = AppBo
-						.query("SELECT sls.id,sls.scene_name,sls.scene_status,sls.scene_contime FROM sh_link_scenesub sls where sls.link_code='"
+						.query("SELECT sls.id,sls.scene_name,sls.scene_status,sls.scene_contime FROM sh_link_scenesub sls where is_del='2' sls.link_code='"
 								+ linkCode + "'");
 				// 单个联动里面所有的情景
 				List<Map<String, Object>> resSceneList = new ArrayList<Map<String, Object>>();// 接口最终返回数据的map里的联动list的单个联动map里的情景list
