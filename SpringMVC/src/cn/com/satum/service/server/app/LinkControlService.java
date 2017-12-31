@@ -129,7 +129,7 @@ public class LinkControlService implements AppService {
 				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
 
 				AppBo.runSQL(
-						"INSERT INTO sh_link_devicesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
+						"INSERT INTO sh_link_scenesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
 								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
 								+ sceneStatus + "','" + sceneContime + "')");
 			}
@@ -303,15 +303,6 @@ public class LinkControlService implements AppService {
 						AppBo.runSQL("UPDATE sh_link_scenesub SET is_del='1' WHERE id='" + sceneId + "'");
 					}
 				}
-				String sceneName = (String) sceneMap.get("sceneName");// 情景名称
-				String sceneCode = (String) sceneMap.get("sceneCode");// 情景code
-				String sceneStatus = (String) sceneMap.get("sceneStatus");// 状态
-				String sceneContime = (String) sceneMap.get("sceneContime");// 控制时间；0代表立即
-
-				AppBo.runSQL(
-						"INSERT INTO sh_link_devicesub (id,link_code,scene_name,scene_code,scene_status,scene_contime) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + sceneName + "','" + sceneCode + "','"
-								+ sceneStatus + "','" + sceneContime + "')");
 			}
 		}
 		resMap.put("result", "S");
@@ -420,13 +411,13 @@ public class LinkControlService implements AppService {
 							resVirMap.put("endTime", endTime);// 结束时间
 							resVirMap.put("days", days);// 周几（以“，”分割的字符串）
 
-						}else{
-							String starts=(String) envirMap.get("starts");
-							String ends=(String) envirMap.get("ends");
+						} else {
+							String starts = (String) envirMap.get("starts");
+							String ends = (String) envirMap.get("ends");
 							resVirMap.put("starts", starts);
 							resVirMap.put("ends", ends);
 						}
-						
+
 						resVirList.add(resVirMap);
 					}
 				}
