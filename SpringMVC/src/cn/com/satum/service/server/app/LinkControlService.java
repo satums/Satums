@@ -68,58 +68,31 @@ public class LinkControlService implements AppService {
 		List<Map<String, Object>> virList = (List<Map<String, Object>>) reqMap.get("virList");// 获取所有的联动条件
 		if (virList != null && virList.size() > 0) {
 			for (Map<String, Object> virMap : virList) {
-				String virName = (String) virMap.get("virName");// 条件名称
-				String virCode = "";// 条件code
-				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> linkDicList = AppBo
-						.query("SELECT sld.`code` from sh_link_dic sld where sld.`name`=" + virName);// 查联动条件字典表查询条件code
-				if (linkDicList != null && linkDicList.size() > 0) {
-					virCode = (String) linkDicList.get(0).get("code");
-				}
+				String virName = (String) virMap.get("envirCode");// 条件名称
+				String envirCode = (String) virMap.get("envirCode");// 条件code
+				// @SuppressWarnings("unchecked")
+				// List<Map<String, Object>> linkDicList = AppBo
+				// .query("SELECT sld.`code` from sh_link_dic sld where
+				// sld.`name`=" + virName);// 查联动条件字典表查询条件code
+				// if (linkDicList != null && linkDicList.size() > 0) {
+				// virCode = (String) linkDicList.get(0).get("code");
+				// }
 				String virType = (String) virMap.get("virType");// 条件类型（0：变为；1：此时正好）
 				String virContent = (String) virMap.get("virContent");// 条件内容
 				@SuppressWarnings("unchecked")
 				Map<String, Object> virParamMap = (Map<String, Object>) virMap.get("virParam");// 条件参数
 				String virParam = "";// 存进数据库的条件参数格式
 				// 根据条件code获取条件具体参数，条件不同参数就不同
-				if ("time".equals(virCode)) {// 时间
+				if ("time".equals(envirCode)) {// 时间
 					String startTime = (String) virParamMap.get("startTime");// 开始时间
 					String endTime = (String) virParamMap.get("endTime");// 结束时间
 					String days = (String) virParamMap.get("days");// 周几
 					virParam = startTime + "-" + endTime + " " + days;
 				}
 
-				if ("temp".equals(virCode)) {// 温度
-					String lowTemp = (String) virParamMap.get("lowTemp");// 低温
-					String highTemp = (String) virParamMap.get("highTemp");// 高温
-					virParam = lowTemp + " " + highTemp;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowTemp + "',param_high='" + highTemp
-							+ "' where `code`='" + virCode + "'");
-				}
-				if ("damp".equals(virCode)) {// 湿度
-					String lowDamp = (String) virParamMap.get("lowDamp");// 低点
-					String highDamp = (String) virParamMap.get("highDamp");// 高点
-					virParam = lowDamp + " " + highDamp;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowDamp + "',param_high='" + highDamp
-							+ "' where `code`='" + virCode + "'");
-				}
-				if ("illu".equals(virCode)) {// 光照度
-					String lowIllu = (String) virParamMap.get("lowIllu");// 低点
-					String highIllu = (String) virParamMap.get("highIllu");// 高点
-					virParam = lowIllu + " " + highIllu;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowIllu + "',param_high='" + highIllu
-							+ "' where `code`='" + virCode + "'");
-				}
-				if ("trig".equals(virCode)) {// 触发
-					String seconds = (String) virParamMap.get("seconds");// 秒数
-					virParam = seconds;
-					AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + seconds + "',param_high='" + seconds
-							+ "' where `code`='" + virCode + "'");
-				}
-
 				AppBo.runSQL(
 						"INSERT INTO sh_link_virsub (id,link_code,vir_code,vir_type,vir_content,vir_param) VALUES ('"
-								+ DataUtil.getUUID() + "','" + linkCode + "','" + virCode + "','" + virType + "','"
+								+ DataUtil.getUUID() + "','" + linkCode + "','" + envirCode + "','" + virType + "','"
 								+ virContent + "','" + virParam + "')");
 			}
 
@@ -208,7 +181,7 @@ public class LinkControlService implements AppService {
 						List<Map<String, Object>> virIdList = AppBo
 								.query("SELECT slv.vir_code,slv.vir_type,slv.vir_content,slv.vir_param FROM sh_link_virsub slv where slv.id='"
 										+ virId + "'");
-						String virCode = (String) virIdList.get(0).get("vir_code");// 根据条件id获取条件code
+						String envirCode = (String) virIdList.get(0).get("vir_code");// 根据条件id获取条件code
 						String virType = (String) virIdList.get(0).get("vir_type");// 根据条件id获取条件类型
 						String virContent = (String) virIdList.get(0).get("vir_content");// 根据条件id获取条件内容
 						String virParam = (String) virIdList.get(0).get("vir_param");// 根据条件id获取条件参数
@@ -223,7 +196,7 @@ public class LinkControlService implements AppService {
 						Map<String, Object> virParamMap = (Map<String, Object>) virMap.get("virParam");// 条件参数
 						if (!virParamMap.isEmpty()) {
 							// 根据条件code获取条件具体参数，条件不同参数就不同
-							if ("time".equals(virCode)) {// 时间
+							if ("time".equals(envirCode)) {// 时间
 								String startTime = (String) virParamMap.get("startTime");// 开始时间
 								if (StringUtils.isNotBlank(startTime)) {
 									virParam.replace(virParam.substring(0, virParam.lastIndexOf("-")), startTime);
@@ -240,54 +213,21 @@ public class LinkControlService implements AppService {
 											days);
 								}
 							}
+							@SuppressWarnings("unchecked")
+							List<Map<String, Object>> envirList = AppBo
+									.query("SELECT envir_name,starts,ends FROM sh_common_envir where envir_code='"
+											+ envirCode + "'");
+							String starts = (String) envirList.get(0).get("starts");
+							String ends = (String) envirList.get(0).get("ends");
 
-							if ("temp".equals(virCode)) {// 温度
-								String lowTemp = (String) virParamMap.get("lowTemp");// 低温
-								if (StringUtils.isNotBlank(lowTemp)) {
-									virParam.replace(virParam.substring(0, virParam.indexOf(" ")), lowTemp);
-								}
-								String highTemp = (String) virParamMap.get("highTemp");// 高温
-								if (StringUtils.isNotBlank(lowTemp)) {
-									virParam.replace(virParam.substring(virParam.indexOf(" ") + 1, virParam.length()),
-											highTemp);
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowTemp + "',param_high='"
-										+ highTemp + "' where `code`='" + virCode + "'");
+							if (StringUtils.isNotBlank((String) virParamMap.get("starts"))) {
+								starts = (String) virParamMap.get("starts");
 							}
-							if ("damp".equals(virCode)) {// 湿度
-								String lowDamp = (String) virParamMap.get("lowDamp");// 低点
-								if (StringUtils.isNotBlank(lowDamp)) {
-									virParam.replace(virParam.substring(0, virParam.indexOf(" ")), lowDamp);
-								}
-								String highDamp = (String) virParamMap.get("highDamp");// 高点
-								if (StringUtils.isNotBlank(highDamp)) {
-									virParam.replace(virParam.substring(virParam.indexOf(" ") + 1, virParam.length()),
-											highDamp);
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowDamp + "',param_high='"
-										+ highDamp + "' where `code`='" + virCode + "'");
+							if (StringUtils.isNotBlank((String) virParamMap.get("ends"))) {
+								ends = (String) virParamMap.get("ends");
 							}
-							if ("illu".equals(virCode)) {// 光照度
-								String lowIllu = (String) virParamMap.get("lowIllu");// 低点
-								if (StringUtils.isNotBlank(lowIllu)) {
-									virParam.replace(virParam.substring(0, virParam.indexOf(" ")), lowIllu);
-								}
-								String highIllu = (String) virParamMap.get("highIllu");// 高点
-								if (StringUtils.isNotBlank(highIllu)) {
-									virParam.replace(virParam.substring(virParam.indexOf(" ") + 1, virParam.length()),
-											highIllu);
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + lowIllu + "',param_high='"
-										+ highIllu + "' where `code`='" + virCode + "'");
-							}
-							if ("trig".equals(virCode)) {// 触发
-								String seconds = (String) virParamMap.get("seconds");// 秒数
-								if (StringUtils.isNotBlank(seconds)) {
-									virParam = seconds;
-								}
-								AppBo.runSQL("UPDATE sh_link_dic SET param_low='" + seconds + "',param_high='" + seconds
-										+ "' where `code`='" + virCode + "'");
-							}
+							AppBo.runSQL("UPDATE sh_common_envir SET ends='" + ends + "',starts='" + starts
+									+ "' where envir_code='" + envirCode + "'");
 						}
 
 						AppBo.runSQL("UPDATE sh_link_virsub SET vir_type='" + virType + "',vir_content='" + virContent
@@ -457,7 +397,7 @@ public class LinkControlService implements AppService {
 						String virType = (String) virMap.get("vir_type");// 条件类型
 						String virContent = (String) virMap.get("vir_content");// 条件内容
 						String virParam = (String) virMap.get("vir_param");// 条件参数（只在code为time的情况用到）
-						String virCode = (String) virMap.get("vir_code");// 条件code
+						String envirCode = (String) virMap.get("vir_code");// 条件code
 
 						resVirMap.put("virId", virId);
 						resVirMap.put("virType", virType);
@@ -465,14 +405,14 @@ public class LinkControlService implements AppService {
 
 						// 根据条件code查询条件字典表的条件名称、条件参数（code为time的条件除外，参数在条件表存储）
 						@SuppressWarnings("unchecked")
-						List<Map<String, Object>> virDicList = AppBo
-								.query("SELECT sld.`name`,sld.param_low,sld.param_high FROM sh_link_dic sld WHERE sld.`code`='"
-										+ virCode + "'");
-						Map<String, Object> virDicMap = virDicList.get(0);
-						String virName = (String) virDicMap.get("name");
-						resVirMap.put("virName", virName);
+						List<Map<String, Object>> envirList = AppBo
+								.query("SELECT envir_name,starts,ends FROM sh_common_envir  WHERE envir_code='"
+										+ envirCode + "'");
+						Map<String, Object> envirMap = envirList.get(0);
+						String envirName = (String) envirMap.get("envir_name");
+						resVirMap.put("envirName", envirName);
 
-						if ("time".equals(virCode)) {// 时间
+						if ("time".equals(envirCode)) {// 时间
 							String startTime = virParam.substring(0, virParam.lastIndexOf("-"));
 							String endTime = virParam.substring(virParam.lastIndexOf("-") + 1, virParam.indexOf(" "));
 							String days = virParam.substring(virParam.indexOf(" ") + 1, virParam.length());
@@ -480,29 +420,13 @@ public class LinkControlService implements AppService {
 							resVirMap.put("endTime", endTime);// 结束时间
 							resVirMap.put("days", days);// 周几（以“，”分割的字符串）
 
+						}else{
+							String starts=(String) envirMap.get("starts");
+							String ends=(String) envirMap.get("ends");
+							resVirMap.put("starts", starts);
+							resVirMap.put("ends", ends);
 						}
-						if ("temp".equals(virCode)) {// 温度
-							String lowTemp = (String) virDicMap.get("param_low");
-							String highTemp = (String) virDicMap.get("param_high");
-							resVirMap.put("lowTemp", lowTemp);// 低温
-							resVirMap.put("highTemp", highTemp);// 高温
-						}
-						if ("damp".equals(virCode)) {// 湿度
-							String lowDamp = (String) virDicMap.get("param_low");
-							String highDamp = (String) virDicMap.get("param_high");
-							resVirMap.put("lowDamp", lowDamp);// 低点
-							resVirMap.put("highDamp", highDamp);// 高点
-						}
-						if ("illu".equals(virCode)) {// 光照度
-							String lowIllu = (String) virDicMap.get("param_low");
-							String highIllu = (String) virDicMap.get("param_high");
-							resVirMap.put("lowIllu", lowIllu);// 低点
-							resVirMap.put("highIllu", highIllu);// 高点
-						}
-						if ("trig".equals(virCode)) {// 触发
-							String seconds = (String) virDicMap.get("param_low");
-							resVirMap.put("seconds", seconds);// 秒数
-						}
+						
 						resVirList.add(resVirMap);
 					}
 				}
