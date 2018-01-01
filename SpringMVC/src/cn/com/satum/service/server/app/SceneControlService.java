@@ -153,7 +153,7 @@ public class SceneControlService implements AppService {
 					
 					//若falg=true device_code不存在，删除之
 					if(falg){
-						appBo.runSQL("update sh_scene_devicesub set is_del='2' where scene_code='"+scene_code+"' and device_code='"+deviceCode+"'");
+						appBo.runSQL("update sh_scene_devicesub set is_del='1' where scene_code='"+scene_code+"' and device_code='"+deviceCode+"'");
 					}
 					
 					//若强行将falg=true，进行下次判断
@@ -202,7 +202,7 @@ public class SceneControlService implements AppService {
 					
 					//若falg=true link_code不存在，删除之
 					if(falg){
-						appBo.runSQL("update sh_scene_linksub set is_del='2' where scene_code='"+scene_code+"' and link_code='"+linkCode+"'");
+						appBo.runSQL("update sh_scene_linksub set is_del='1' where scene_code='"+scene_code+"' and link_code='"+linkCode+"'");
 					}
 					
 					//若强行将falg=true，进行下次判断
