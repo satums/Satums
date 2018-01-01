@@ -33,7 +33,6 @@ public class SceneControlService implements AppService {
 	private final static String jsondata="{"
 			+ "\"flag\":\"add\","
 			+ "\"user_code\":\"15738928228\","
-			+ "\"scene_code\":\"00001\","
 			+ "\"scene_name\":\"回家模式\","
 			+ "\"device\":[{"			
 			+ "\"device_code\":\"001\","
@@ -72,7 +71,7 @@ public class SceneControlService implements AppService {
 		Map lmap=JSONObject.fromObject(jsondata);
 		String mark=(String)lmap.get("flag");
 		String user_code=(String)lmap.get("user_code");
-		String scene_code=(String)lmap.get("scene_code");
+		String scene_code=DataUtil.getUUID();
 		String scene_name=(String)lmap.get("scene_name");
 		JSONArray device=JSONObject.fromObject(jsondata).getJSONArray("device");
 		Object[] devices=device.toArray();		
