@@ -73,6 +73,7 @@ public class SceneControlService implements AppService {
 		String user_code=(String)lmap.get("user_code");
 		String scene_code=DataUtil.getUUID();
 		String scene_name=(String)lmap.get("scene_name");
+		if(mark.equals("add")||mark.equals("update")){
 		JSONArray device=JSONObject.fromObject(jsondata).getJSONArray("device");
 		Object[] devices=device.toArray();		
 		JSONArray link=JSONObject.fromObject(jsondata).getJSONArray("link");
@@ -80,11 +81,15 @@ public class SceneControlService implements AppService {
 		if(mark.equals("add")){
 			map=add(scene_code,scene_name,user_code,devices,links);
 		}else if(mark.equals("update")){
+			scene_code=(String)lmap.get("scene_code");
 			map=update(scene_code,user_code,devices,links);
-		}else if(mark.equals("delete")){
-			map=delete(user_code,scene_code);
 		}
-		else if(mark.equals("query")){
+		}else{
+		if(mark.equals("delete")){
+			scene_code=(String)lmap.get("scene_code");
+			map=delete(user_code,scene_code);
+		}else if(mark.equals("query")){
+			scene_code=(String)lmap.get("scene_code");
 			String type = (String)lmap.get("type");
 			if("1".equals(type)){
 				map=queryScene(user_code);// 查询情景
@@ -96,6 +101,7 @@ public class SceneControlService implements AppService {
 				map=queryLink(scene_code);// 查询联动
 			}
 			
+		}
 		}
 		JSONObject json=JSONObject.fromObject(map);
 		return json.toString();	
@@ -132,7 +138,7 @@ public class SceneControlService implements AppService {
 			List<Map<String, Object>> deviceLists = appBo
 					.query("SELECT device_code from sh_scene_devicesub where is_del='2' and  scene_code='"+scene_code+"'");
 			
-			Boolean falg=true;
+		
 			if (deviceLists != null && deviceLists.size() > 0) {
 				//遍历情景下所有设备
 				for (Map<String, Object> deviceList : deviceLists) {
@@ -140,23 +146,20 @@ public class SceneControlService implements AppService {
 					String deviceCode = (String) deviceList.get("device_code");//设备code
 					//遍历接口传过来的设备
 					for(int j=0;j<devices.length;j++){
+						Boolean falg=true;
 						Map dmaps=(Map)devices[j];
 						device_code=(String)dmaps.get("device_code");
 						if(device_code.equals(deviceCode)){
 							//若device_code存在，则将falg=false
 							falg = false;
-							break;
+							
+						}else{
+							//若falg=true device_code不存在，删除之							
+								appBo.runSQL("update sh_scene_devicesub set is_del='1' where scene_code='"+scene_code+"' and device_code='"+deviceCode+"'");
+							
 						}
 						
-					}
-					
-					//若falg=true device_code不存在，删除之
-					if(falg){
-						appBo.runSQL("update sh_scene_devicesub set is_del='1' where scene_code='"+scene_code+"' and device_code='"+deviceCode+"'");
-					}
-					
-					//若强行将falg=true，进行下次判断
-					falg=true;
+					}	
 				} 
 			}
 		}
@@ -194,18 +197,13 @@ public class SceneControlService implements AppService {
 						if(link_code.equals(linkCode)){
 							//若link_code存在，则将falg=false
 							falg = false;
-							break;
-						}
-						
-					}
-					
-					//若falg=true link_code不存在，删除之
-					if(falg){
-						appBo.runSQL("update sh_scene_linksub set is_del='1' where scene_code='"+scene_code+"' and link_code='"+linkCode+"'");
-					}
-					
-					//若强行将falg=true，进行下次判断
-					falg=true;
+							
+						}else{
+							//若falg=true link_code不存在，删除之
+							appBo.runSQL("update sh_scene_linksub set is_del='1' where scene_code='"+scene_code+"' and link_code='"+linkCode+"'");
+
+						}						
+					}								
 				} 
 			}
 		}
@@ -238,10 +236,10 @@ public class SceneControlService implements AppService {
 					appBo.runSQL("insert into sh_scene_devicesub (id,scene_code,device_code,name,status,contime) values"
 							+ "('"+DataUtil.getUUID()+"','"+scene_code+"','"+device_code+"','"+device_name+"','"+status+"','"+controller+"')");					
 			} 
-			for(int i=0;i<devices.length;i++){
-				Map dmap=(Map)devices[i];
+			for(int i=0;i<links.length;i++){
+				Map dmap=(Map)links[i];
 				link_code=(String)dmap.get("link_code");
-				link_name=(String)dmap.get("link_name");
+				link_name=(String)dmap.get("link_name");		
 				status=(String)dmap.get("status");
 				controller=(String)dmap.get("controller");			
 					appBo.runSQL("insert into sh_scene_linksub (id,scene_code,link_code,name,status,contime) values"
