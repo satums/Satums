@@ -1,10 +1,13 @@
 package cn.com.test;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
@@ -16,6 +19,8 @@ import cn.com.Data.Bo.AppBo;
 import cn.com.moudle.user.dao.UserDAO;
 import cn.com.moudle.user.entity.User;
 import cn.com.moudle.user.mapper.UserMapper;
+import cn.com.satum.util.GetStyle;
+import cn.com.satum.util.PostStyle;
 
 public class Test1 {
 	private JdbcTemplate template;
@@ -23,32 +28,32 @@ public class Test1 {
 	this.template = template;
 }
 
-	public static void main(String[] args) throws SQLException {
-		
+	public static void main(String[] args) throws SQLException {		
 		AppBo bo=new AppBo();
-		// TODO Auto-generated method stub
-		/**
-ApplicationContext ac=new ClassPathXmlApplicationContext("applicationContext.xml");
-
-UserDAO ud=ac.getBean("UserDAO",UserDAO.class);
-
-
-List<User> list=ud.queryAll();
-
-for(User user:list){
-	System.out.println(user.getCode()+"===="+user.getUsername());
-}
-**/
-	List list=new ArrayList();
-	Map map=new HashMap();
-	map.put("name", "name");
-	Map map1=new HashMap();
-	map1.put("code", "2323");
-	map1.put("names", "23432");
-	list.add(map1);
-    //测试提交git123
-	map.put("data", list);
-		System.out.println("===="+JSONObject.fromObject(map));
-	
+		GetStyle gs=new GetStyle();
+		PostStyle ps=new PostStyle();
+	String url="http://service.zhahehe.com/services/SatumService?wsdl";
+	String services="appService";
+	//String method="Login";//登录接口方法
+	String method="Register";//注册接口方法
+	String jsondata="{\"city_id\":\"2\","
+			+ "\"mobile\":\"15738928221\","
+			+ "\"username\":\"̷����\","
+			+ "\"password\":\"123456\","
+			+ "\"salt\":\"1\""
+			+ "}";
+	System.out.println(jsondata);
+String str="";
+	try {
+		str=ps.postData(url, services, method, jsondata);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
+	Map map=JSONObject.fromObject(str);
+	String msg=map.get("msg").toString();
+	String flag=map.get("result").toString();
+	System.out.println(flag+"============="+msg);
+	}
+	
 }
