@@ -14,6 +14,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 import cn.com.Data.Bo.AppBo;
 import net.sf.json.JSONObject;
@@ -139,11 +143,12 @@ public class PostStyle {
 		 }
 		public static String postData(String url,String service,String method,String param) throws IOException {	
 			
-			param=getBase64(param);	
+			//param=getBase64(param);	
 				  URL wsUrl = new URL(url);    
 			        HttpURLConnection conn = (HttpURLConnection) wsUrl.openConnection();   		
 			    conn.setRequestMethod("POST");
 			    conn.setRequestProperty("Content-Type", "application/json;");
+			    
 			    String soap = "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:util=\"http://util.server.service.satum.com.cn\">"
 		        		+" <soapenv:Header/>"             
 		               
@@ -157,9 +162,13 @@ public class PostStyle {
 		                      + "</soapenv:Envelope>";
 			   
 			    conn.setRequestProperty("SOAPAction",service);
-			    conn.setRequestProperty("Content-Language", "en-US");
-			   System.out.println(soap);
-			    conn.setUseCaches(false);
+			    conn.setRequestProperty("Content-Language","en-US");
+			    conn.setRequestProperty("Charset", "UTF8");
+			    conn.setRequestProperty("accept", "*/*");
+	            conn.setRequestProperty("connection", "keep-alive");
+	            conn.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64)");
+
+			    conn.setUseCaches(true);
 			    conn.setDoInput(true);
 			    conn.setDoOutput(true);
 			    // Send request
@@ -182,11 +191,9 @@ public class PostStyle {
 			    rd = new BufferedReader(new InputStreamReader(is));
 			    String line;
 			    while ((line = rd.readLine()) != null) {
-			    	 
 			    response.append(line);  
-			    response.append('\n');
-			   System.out.println(response);
-			    String s=response.toString().split(">")[4];  
+			    response.append('\n');   
+			    String s=response.toString().split(">")[4];			   
 			    str=s.split("<")[0];
 			    }
 			    } catch (IOException ioe) {
@@ -205,9 +212,11 @@ public class PostStyle {
 			    }
 			    }
 			    }
-			    
+			    str=str.replace("&quot;", "\"");
+			    str=str.replace("&#x", "\\u");
+			    str=str.replace(";", "");
 				return str;
-		 }
+		 }	   
 		public static String getData(String url,List list) throws IOException {
 			String param="";
 			StringBuffer sbf=new StringBuffer();

@@ -7,21 +7,24 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 public class Reciver {
-	  public static void recive() {  
-	        System.out.println("---recive---");  
+	  public static String recive(String ips,int ports) {  
+	        System.out.println("---recive---"); 
+	        String datas="";
 	        // 接收端  
 	        try {  
 	            //创建接收方的套接字 对象  并与send方法中DatagramPacket的ip地址与端口号一致  
-	            DatagramSocket socket = new DatagramSocket(8080,  
+	            DatagramSocket socket = new DatagramSocket(8049,  
 	                    InetAddress.getByName("192.168.1.101"));  
 	            //接收数据的buf数组并指定大小  
 	            byte[] buf = new byte[1024];  
 	            //创建接收数据包，存储在buf中  
 	            DatagramPacket packet = new DatagramPacket(buf, buf.length);  
+	            System.out.println("---recive--1111111111-"); 
 	            //接收操作  
 	            socket.receive(packet);  
 	            byte data[] = packet.getData();// 接收的数据  
 	            InetAddress address = packet.getAddress();// 接收的地址  
+	            datas=new String(data);
 	            System.out.println("接收的文本:::" + new String(data));  
 	            System.out.println("接收的ip地址:::" + address.toString());  
 	            System.out.println("接收的端口::" + packet.getPort()); // 9004  
@@ -41,9 +44,10 @@ public class Reciver {
 	            // TODO Auto-generated catch block  
 	            e.printStackTrace();  
 	        }  
+	        return new String(datas);
 	    }  
 	  public static void main(String[] args) {
-		recive();
+		//recive();
 	}
 	   
 }

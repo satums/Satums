@@ -18,21 +18,14 @@ public class Sender {
 		// 发送端
 		try {
 			// 发送的内容
-//			text = "弋辛博的家。。。!";
-			text="0xAA"+text+"0X55";
-			byte[] buf = text.getBytes();
-			
-			// 构造数据报包，用来将长度为 length 的包发送到指定主机上的指定端口号。
-			
+			text="0x55 "+new HEX2And16().hex16tTo2(text)+"0xff";
+			byte[] buf = text.getBytes();			
+			// 构造数据报包，用来将长度为 length 的包发送到指定主机上的指定端口号。		
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(IP),port);
-			InetAddress address=InetAddress.getByName(IP);
-			System.out.println(address+"000000000000000-----------------");
+			InetAddress address=InetAddress.getByName(IP);		
 			// 从此套接字发送数据报包
-			boolean f=socket.isConnected();
-			boolean f1=socket.isClosed();
 			socket.send(packet);
 			// 接收，接收者返回的数据
-//			displayReciveInfo(socket);
 			// 关闭此数据报套接字。
 			socket.close();
 		} catch (SocketException e) {
@@ -45,6 +38,19 @@ public class Sender {
 		return param;
 	}
 	public static void main(String[] args) throws SocketException {
-		new Sender().send("模拟主机1", "192.168.0.101", 8049);
+		String json="{"
+				+ "\"zjbh\":\"hhhhhhhhhhhsss\""		
+				+ "data:["
+				+ "{\"num\":\"1\","
+				+ "\"name\":\"A电源一\","
+				+ "\"status\":\"1\"},"
+				+ "{\"num\":\"2\","
+				+ "\"name\":\"A电源二\","
+				+ "\"status\":\"2\"}"		
+				+ "]}";
+json=new HEX2And16().hex16tTo2(json);
+System.out.println(json);
+		new Sender().send(json, "192.168.1.101", 8049);
+
 	}
 }

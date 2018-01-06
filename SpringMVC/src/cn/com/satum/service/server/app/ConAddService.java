@@ -12,30 +12,31 @@ import cn.com.satum.service.server.util.DataUtil;
 import cn.com.satum.util.PostStyle;
 import cn.com.satum.util.Sender;
 public class ConAddService implements AppService {
+	private static AppToMaster atm=new AppToMaster();
 	private final static String jsondata1="{"
 			+ "\"flag\":\"device\","
 			+ "\"zjbh\":\"hhhhhhhhhhhsss\","
 			+ "\"user_code\":\"15738928228\","
-			+ "\"code\":\"A01\","
-			+ "\"starts\":\"2\","
+			+ "\"code\":\"041b93cad51347c28f4c6126d5d6058f\","
+			+ "\"status\":\"2\","
 			+ "}";
 	private final static String jsondata2="{"
 			+ "\"flag\":\"scene\","
 			+ "\"zjbh\":\"hhhhhhhhhhhsss\","
 			+ "\"user_code\":\"15738928228\","
 			+ "\"code\":\"00001\","
-			+ "\"starts\":\"2\","
+			+ "\"status\":\"2\","
 			+ "}";
 	private final static String jsondata3="{"
 			+ "\"flag\":\"link\","
 			+ "\"zjbh\":\"hhhhhhhhhhhsss\","
 			+ "\"user_code\":\"15738928228\","
 			+ "\"code\":\"001\","
-			+ "\"starts\":\"2\","
+			+ "\"status\":\"2\","
 			+ "}";
 		public String getInfo(String jsonData) {
 			AppBo appBo=new AppBo();
-			Map map=JSONObject.fromObject(jsondata1);
+			Map map=JSONObject.fromObject(jsonData);
 			String mark=map.get("flag").toString();;
 			String userid=map.get("user_code").toString();
 			String conID=map.get("code").toString();
@@ -44,38 +45,53 @@ public class ConAddService implements AppService {
 			String flag="S";
 			Map maps=new HashMap();
 			try {
-				maps=new DataUtil().dataQuery(zjbh,jsonData);
+				maps=new DataUtil().dataQuery(zjbh,userid);
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			String IP=maps.get("ip").toString();
+			flag=maps.get("result").toString();
+			String message=maps.get("message").toString();
 			int second=Integer.valueOf(maps.get("second").toString());
 			int port=Integer.valueOf(maps.get("port").toString());	
+			/**
 	try {
 		flag=new Sender().send(jsonData,IP,port);
 	} catch (SocketException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	}
+	}**/
 	//second是检测主机心跳检测的时间可以大于心跳检测时间1-5秒，假设心跳检测时间为60秒
 	if(!flag.equals("S")||second>65){
 		flag="E";
+		maps.put("message", "主机不在线");
 	}else{
 		switch(mark){
 		case "device":
-			flag=new DataUtil().ControllerDevice(maps,userid, conID, status);
+			//发送设备的信息至主机
+			try {
+				String json="{"		
+						+ "\"code\":\"041b93cad51347c28f4c6126d5d6058f\","
+						+ "\"status\":\"1\""
+						+ "}";
+				new Sender().send(json,IP,port);
+				atm.DeviceUpdate(conID, status);
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		case "scene":
-			flag=new DataUtil().ControllerScene(maps,userid, conID, status);
+			//发送情景的信息至主机
 			break;
 		case "link":
-			flag=new DataUtil().ControllerLink(maps,userid, conID, status);
+			//发送联动的信息至主机
 			break;
 		
 		}			
 	}
-			return new PostStyle().getBase64(flag);
+			return JSONObject.fromObject(maps).toString();
 		}
 
 }
