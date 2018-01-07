@@ -1,4 +1,6 @@
 package cn.com.satum.service.server.app;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.com.Data.Bo.AppBo;
+import cn.com.satum.service.server.util.CheckData;
 import cn.com.satum.service.server.util.DataUtil;
 
 /**
@@ -23,7 +26,12 @@ public class DeviceControlService implements AppService {
 		String reqType = (String) reqMap.get("flag");
 		String resStr = "";
 		if ("add".equals(reqType)) {
-			resStr = addDevice(reqMap);// 添加设备
+			try {
+				resStr = addDevice(reqMap);
+			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// 添加设备
 		} else if ("update".equals(reqType)) {
 			String type = (String) reqMap.get("type");
 			if("1".equals(type)){
@@ -58,8 +66,10 @@ public class DeviceControlService implements AppService {
 	 * 
 	 * @param reqMap
 	 * @return
+	 * @throws UnsupportedEncodingException 
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public String addDevice(Map<String, Object> reqMap) {
+	public String addDevice(Map<String, Object> reqMap) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 
@@ -110,6 +120,9 @@ public class DeviceControlService implements AppService {
 				.query("SELECT id,name from sh_common_device_type where parent_id = '" + typeId + "'  AND is_del='2' ");
 		
 		if (deviceTypeList.size()==0) {//当控制类型level为最底层时
+			
+			
+				
 			// 查询设备类型表
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> deviceTypeList1 = AppBo
@@ -118,8 +131,14 @@ public class DeviceControlService implements AppService {
 				String deviceTypeId = (String) deviceTypeMap.get("id");//设备类型id
 				String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
 				String soft = getSoft("sh_device", userCode);
+				String ids=DataUtil.getUUID();
 				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft) values "
-						+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"')");
+						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"')");				
+				//如果类型ID是摄像头
+				if(typeId.equals("90")){
+					AppBo.runSQL("insert into sh_camer (id,usercode,deviceid,type_id,type_name,code,name,account,pwd,status,is_del) values "
+							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','admin','"+CheckData.EncoderByMd5("888888")+"','2','2')");
+				}			
 			}
 		}
 		
@@ -163,6 +182,11 @@ public class DeviceControlService implements AppService {
 		
 		if (StringUtils.isNotBlank(name)) {
 			AppBo.runSQL("UPDATE sh_device SET name = '" + name + "' WHERE is_del='2' AND id='" + id + "' AND user_code='" + userCode + "'");
+		List listc=AppBo.query("select * from sh_camer where deviceid='"+id+"'");
+		if(listc.size()>0){
+			AppBo.runSQL("update sh_camer set name ='"+name+"' where devicedi='"+id+"'");					
+		}
+		
 		}
 		else{
 			resMap.put("result", "S");
