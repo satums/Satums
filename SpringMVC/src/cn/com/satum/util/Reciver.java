@@ -13,8 +13,8 @@ public class Reciver {
 	        // 接收端  
 	        try {  
 	            //创建接收方的套接字 对象  并与send方法中DatagramPacket的ip地址与端口号一致  
-	            DatagramSocket socket = new DatagramSocket(8049,  
-	                    InetAddress.getByName("192.168.1.101"));  
+	            DatagramSocket socket = new DatagramSocket(8090,  
+	                    InetAddress.getByName("192.168.1.102"));  
 	            //接收数据的buf数组并指定大小  
 	            byte[] buf = new byte[1024];  
 	            //创建接收数据包，存储在buf中  
@@ -47,7 +47,7 @@ public class Reciver {
 	        return new String(datas);
 	    }  
 	  public static void main(String[] args) {
-		//recive();
+		System.out.println(recive("",1));
 	}
 	   
 }

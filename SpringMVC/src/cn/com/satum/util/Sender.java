@@ -13,12 +13,12 @@ public class Sender {
 	// 发送者发给客户端数据,客户端返回数据给发送者
 	public String send( String text,String IP,int port) throws SocketException {
 		System.out.println("---send----");
-		this.socket = new DatagramSocket();
+		this.socket = new DatagramSocket(8090);
 		String param="S";
 		// 发送端
 		try {
 			// 发送的内容
-			text="0x55 "+new HEX2And16().hex16tTo2(text)+"0xff";
+			
 			byte[] buf = text.getBytes();			
 			// 构造数据报包，用来将长度为 length 的包发送到指定主机上的指定端口号。		
 			DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(IP),port);
@@ -39,7 +39,7 @@ public class Sender {
 	}
 	public static void main(String[] args) throws SocketException {
 		String json="{"
-				+ "\"zjbh\":\"hhhhhhhhhhhsss\""		
+				+ "\"zjbh\":\"bbbbbbbbbbbbb1\","		
 				+ "data:["
 				+ "{\"num\":\"1\","
 				+ "\"name\":\"A电源一\","
@@ -48,9 +48,9 @@ public class Sender {
 				+ "\"name\":\"A电源二\","
 				+ "\"status\":\"2\"}"		
 				+ "]}";
-json=new HEX2And16().hex16tTo2(json);
+
 System.out.println(json);
-		new Sender().send(json, "192.168.1.101", 8049);
+		new Sender().send(json, "192.168.1.102", 8049);
 
 	}
 }

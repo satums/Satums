@@ -64,18 +64,17 @@ public void contextInitialized(ServletContextEvent context) {
                  String ips=dp_receive.getAddress().getHostAddress();
                  int ports=dp_receive.getPort();
                  String data=new String(dp_receive.getData());
-                 System.out.println("-------------"+data);
-                 str_send=new HEX2And16().hex16tTo2(new DataUtil().dataParse(data,ips,ports));
-                 System.out.println(new HEX2And16().hex2To16(str_send));
-                /** //接收数据返回接收的状态
-                 DatagramPacket dp_send= new DatagramPacket(str_send.getBytes(),str_send.length(),dp_receive.getAddress(),8049);  
-                 try {
-                	 
+                 System.out.println("----------1111---"+data);
+                 str_send=new DataUtil().dataParse(data,ips,ports);
+                 System.out.println(str_send);
+                 //接收数据返回接收的状态
+                 DatagramPacket dp_send= new DatagramPacket(str_send.getBytes(),str_send.length(),dp_receive.getAddress(),ports);  
+                 try {              	 
         			ds.send(dp_send);
         		} catch (IOException e) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
-        		}  **/
+        		}  
                  //由于dp_receive在接收了数据之后，其内部消息长度值会变为实际接收的消息的字节数，  
                  //所以这里要将dp_receive的内部消息长度重新置为1024  
                  dp_receive.setLength(1024);  
