@@ -59,8 +59,7 @@ public void contextInitialized(ServletContextEvent context) {
         		} catch (IOException e) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
-        		}  
-               
+        		}                
                  String ips=dp_receive.getAddress().getHostAddress();
                  int ports=dp_receive.getPort();
                  String data=new String(dp_receive.getData());

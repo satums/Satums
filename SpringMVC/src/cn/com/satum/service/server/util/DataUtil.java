@@ -28,13 +28,23 @@ public class DataUtil {
 			+ "\"status\":\"2\"}"		
 			+ "]}";
 	// 解析二进制访问服务端时发送的数据
-	public String dataParse(String data, String IPs, int ports) {		
-		Map map=JSONObject.fromObject(data);
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dates = sdf.format(date);
-		String zjbh=(String)map.get("zjbh");
-		return new DataUtil().dataUpdate(zjbh, IPs, ports, dates);
+	public String dataParse(String data, String IPs, int ports) {
+		String msg="";
+		Map map=new HashMap();		
+		try{
+			map=JSONObject.fromObject(data);
+			Date date = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String dates = sdf.format(date);
+			String zjbh=(String)map.get("zjbh");
+			msg=new DataUtil().dataUpdate(zjbh, IPs, ports, dates);
+		}catch(Exception e){
+			msg=e.getMessage();
+		}
+		
+		
+		
+		return msg;
 	}
 public static boolean checkMaster(String zjbh){
 	boolean flag=true;
