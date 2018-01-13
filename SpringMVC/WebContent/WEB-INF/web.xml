@@ -1,141 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4" 
-xmlns="http://java.sun.com/xml/ns/j2ee" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"> 
- <display-name>MyServlet</display-name>
- 
-<welcome-file-list>
-       <welcome-file>/WEB-INF/jsp/login.jsp</welcome-file>
-    </welcome-file-list>
-    <filter>
-		<filter-name>encodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-	</filter>
-	<!-- <filter>
-		<filter-name>FrameWebFilter</filter-name>
-		<filter-class>cn.com.chx.server.filter.FrameWebFilter</filter-class>
-	</filter> -->
-	
-       <listener>
-   <listener-class>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.4">
+  <display-name>MyServlet</display-name>
+  <welcome-file-list>
+    <welcome-file>/WEB-INF/jsp/login.jsp</welcome-file>
+  </welcome-file-list>
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <listener>
+    <listener-class>
      org.springframework.web.context.ContextLoaderListener
    </listener-class>
-</listener>
-   <listener>  
-        <listener-class>cn.com.satum.server.InitListener</listener-class>  
-    </listener> 
-<listener>
-		<listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
-	</listener>
+  </listener>
+  <listener>
+    <listener-class>cn.com.satum.server.InitListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
+  </listener>
   <servlet>
-      <servlet-name>SpringMVC</servlet-name>
-      <servlet-class>
+    <servlet-name>SpringMVC</servlet-name>
+    <servlet-class>
          org.springframework.web.servlet.DispatcherServlet
       </servlet-class>
-      </servlet>
-      <servlet>
-		<servlet-name>AxisServlet</servlet-name>
-		
-		<servlet-class>
+  </servlet>
+  <listener>  
+        <listener-class>  
+            org.springframework.web.context.request.RequestContextListener  
+        </listener-class>  
+    </listener> 
+  <servlet>
+    <servlet-name>AxisServlet</servlet-name>
+    <servlet-class>
 			org.apache.axis.transport.http.AxisServlet
 		</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>AdminServlet</servlet-name>
-		
-		<servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>AdminServlet</servlet-name>
+    <servlet-class>
 			org.apache.axis.transport.http.AdminServlet
 		</servlet-class>
-		<load-on-startup>10</load-on-startup>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>SOAPMonitorService</servlet-name>
-		
-		<servlet-class>
+    <load-on-startup>10</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>SOAPMonitorService</servlet-name>
+    <servlet-class>
 			org.apache.axis.monitor.SOAPMonitorService
 		</servlet-class>
-		<init-param>
-			<param-name>SOAPMonitorPort</param-name>
-			<param-value>5001</param-value>
-		</init-param>
-		<load-on-startup>10</load-on-startup>
-	</servlet>
- 
-  
-
-<!-- 指定Spring Bean的配置文件所在目录。默认配置在WEB-INF目录下 -->
-<context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:applicationContext.xml</param-value>
-</context-param>
-
-     <!-- <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:applicationContext.xml</param-value>    
-      </init-param> --> 
-     
- <!-- <jsp-config>
-  <taglib>
-    <taglib-uri>/tags/struts-bean.tld</taglib-uri>
-    <taglib-location>/WEB-INF/struts-bean.tld</taglib-location>
-  </taglib>
-  </jsp-config> --> 
-    
-  <!--  <servlet>
-    <servlet-name>springMybatis</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:spring-dao.xml</param-value>
+      <param-name>SOAPMonitorPort</param-name>
+      <param-value>5001</param-value>
     </init-param>
-    <load-on-startup>1</load-on-startup>
+    <load-on-startup>10</load-on-startup>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>springMybatis</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>-->
-<!-- <context-param>
+  <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:applicationContext.xml</param-value>
-</context-param> -->
- 
-    <!--  <listener>
-        <listener-class>
-            org.springframework.web.context.request.RequestContextListener</listener-class>
-    </listener>-->
- 
+  </context-param>
+   <servlet-mapping>
+      <servlet-name>SpringMVC</servlet-name>
+      <url-pattern>/</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>DruidStatView</servlet-name>
     <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
   </servlet>
-      <servlet-mapping>
-       <servlet-name>DruidStatView</servlet-name>
-       <url-pattern>/druid/*</url-pattern>
-   </servlet-mapping>
-   <servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/servlet/AxisServlet</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/services/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>SOAPMonitorService</servlet-name>
-		<url-pattern>/service/SOAPMonitor</url-pattern>
-	</servlet-mapping>
-<!--  <error-page>
-    <error-code>404</error-code>
-    <location>/error/404.jsp</location>
-  </error-page>
-  <error-page>
-    <error-code>500</error-code>
-    <location>/error/500.jsp</location>
-  </error-page> --> 
+  <servlet-mapping>
+    <servlet-name>DruidStatView</servlet-name>
+    <url-pattern>/druid/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AxisServlet</servlet-name>
+    <url-pattern>/servlet/AxisServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AxisServlet</servlet-name>
+    <url-pattern>/services/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SOAPMonitorService</servlet-name>
+    <url-pattern>/service/SOAPMonitor</url-pattern>
+  </servlet-mapping>
 </web-app>
