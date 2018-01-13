@@ -133,11 +133,11 @@ public class DeviceControlService implements AppService {
 				String soft = getSoft("sh_device", userCode);
 				String ids=DataUtil.getUUID();
 				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft) values "
-						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"')");				
+						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"')");				
 				//如果类型ID是摄像头
 				if(typeId.equals("90")){
 					AppBo.runSQL("insert into sh_camer (id,usercode,deviceid,type_id,type_name,code,name,account,pwd,status,is_del) values "
-							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','admin','"+CheckData.EncoderByMd5("888888")+"','2','2')");
+							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','admin','"+CheckData.EncoderByMd5("888888")+"','2','2')");
 				}			
 			}
 		}
@@ -162,12 +162,20 @@ public class DeviceControlService implements AppService {
 	 * 修改控制设备
 	 */
 	public String updateDevice(Map<String, Object> reqMap) {
-
 		Map<String, Object> resMap = new HashMap<String, Object>();
+try{
+	
 		String userCode = (String) reqMap.get("userCode");
 		String id = (String) reqMap.get("id");
 		String name = (String) reqMap.get("name");
-		
+		String room_name="";
+		String room_id="";
+		if(reqMap.get("room_name")!=null){
+			room_name=(String) reqMap.get("room_name");
+		}
+		if(reqMap.get("room_id")!=null){
+			room_id=(String) reqMap.get("room_id");
+		}	
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> deviceList = AppBo
 				.query("SELECT id,name FROM sh_device WHERE is_del='2' AND id='"
@@ -181,10 +189,10 @@ public class DeviceControlService implements AppService {
 		}
 		
 		if (StringUtils.isNotBlank(name)) {
-			AppBo.runSQL("UPDATE sh_device SET name = '" + name + "' WHERE is_del='2' AND id='" + id + "' AND user_code='" + userCode + "'");
+			AppBo.runSQL("UPDATE sh_device SET name = '" + name + "',room_id='"+room_id+"',room_name='"+room_name+"' WHERE is_del='2' AND id='" + id + "' AND user_code='" + userCode + "'");
 		List listc=AppBo.query("select * from sh_camer where deviceid='"+id+"'");
 		if(listc.size()>0){
-			AppBo.runSQL("update sh_camer set name ='"+name+"' where devicedi='"+id+"'");					
+			AppBo.runSQL("update sh_camer set name ='"+name+"' where deviceid='"+id+"'");					
 		}
 		
 		}
@@ -194,10 +202,14 @@ public class DeviceControlService implements AppService {
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
-		
-		
+
 		resMap.put("result", "S");
 		resMap.put("msg", "设备修改成功！");
+	}catch(Exception e){
+		resMap.put("result", "E");
+		resMap.put("msg", e.getMessage());
+	}
+		
 		JSONObject json = new JSONObject(resMap);
 		return json.toString();
 	}
@@ -233,12 +245,20 @@ public class DeviceControlService implements AppService {
 	public String deleteDevice(Map<String, Object> reqMap) {
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
-
+try{
 		String id = (String) reqMap.get("id");
 		//删除控制设备
 		AppBo.runSQL("UPDATE sh_device SET is_del='1' WHERE id='" + id + "'");
+		List listc=AppBo.query("select * from sh_camer where deviceid='"+id+"'");
+		if(listc.size()>0){
+			AppBo.runSQL("update sh_camer set is_del='1' where deviceid='"+id+"'");					
+		}
 		resMap.put("result", "S");
 		resMap.put("msg", "设备删除成功！");
+}catch(Exception e){
+	resMap.put("result", "E");
+	resMap.put("msg", e.getMessage());	
+}
 		JSONObject json = new JSONObject(resMap);
 		return json.toString();
 
@@ -327,7 +347,7 @@ public class DeviceControlService implements AppService {
 		// 根据userCode查询设备
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> deviceList = AppBo
-				.query("SELECT id,name FROM sh_device WHERE is_del='2' AND user_code='"
+				.query("SELECT id,name,room_id,room_name,status FROM sh_device WHERE is_del='2' AND user_code='"
 						+ userCode + "' ORDER BY soft " ); 
 		
 		if (deviceList.size()==0)  {
@@ -355,7 +375,7 @@ public class DeviceControlService implements AppService {
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> softLists = AppBo
-				.query("SELECT MAX(soft) as soft from " + table + " where is_del='2' AND user_code = '" + userCode + "' ");
+				.query("SELECT max(soft) as soft from " + table + " where is_del='2' AND user_code = '" + userCode + "' ");
 	    Integer soft = 0;
 	    if (softLists != null && softLists.size() > 0) { 
 	    	for (Map<String, Object> softList : softLists) {
