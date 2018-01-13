@@ -39,8 +39,8 @@ public class Sender {
 	}
 	public static void main(String[] args) throws SocketException {
 		String json="{"
-				+ "\"zjbh\":\"bbbbbbbbbbbbb1\","		
-				+ "data:["
+				+ "\"zjbh\":\"eeeeeeeeeeeee\","		
+				+ "\"data\":["
 				+ "{\"num\":\"1\","
 				+ "\"name\":\"AµÁ‘¥“ª\","
 				+ "\"status\":\"1\"},"
@@ -50,7 +50,7 @@ public class Sender {
 				+ "]}";
 
 System.out.println(json);
-		new Sender().send(json, "192.168.1.102", 8049);
+		new Sender().send(json, "47.93.47.199", 8049);
 
 	}
 }
