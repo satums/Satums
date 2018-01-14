@@ -47,8 +47,8 @@ public class FileDownload {
 			}
 		}
 		         if (fileName != null) {
-		             String realPath = path+"\\"+fileName;
-		             File file = new File(realPath);		      		            
+		             String realPath = path;
+		             File file = new File(realPath,fileName);		      		            
 		                 response.setContentType("application/force-download");// 设置强制下载不打开
 		                 response.addHeader("Content-Disposition","attachment;fileName=" + fileName);// 设置文件名		               
 		                 byte[] buffer = new byte[1024];
