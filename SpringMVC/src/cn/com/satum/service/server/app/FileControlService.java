@@ -184,7 +184,7 @@ public String getInfo(String jsondata) {
      */
     private static String getdir(String filetype)
     {
-        String path = "E:\\Staums\\{0}\\" + getDataString()
+        String path = "Staums\\{0}\\" + getDataString()
                 + "\\";
         switch (filetype)
         {
