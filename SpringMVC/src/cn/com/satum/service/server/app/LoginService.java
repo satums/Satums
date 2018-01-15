@@ -84,7 +84,7 @@ List lis=new ArrayList();
      String str="http://" + request.getServerName() //·þÎñÆ÷µØÖ·    
     	        + ":"     
     	        + request.getServerPort()+"/download/picture?flag=image&id=";
-	List list=AppBo.query("select t.mobile as userCode,t.username,t.email,t.provice_id,t.city_id,t.area_id,t.address,'#' url from sh_user t where mobile='"+userCode+"' order by created_at desc");		
+	List list=AppBo.query("select t.mobile as userCode,t.username,t.email,t.provice_id,t.city_id,t.area_id,t.address,'#' url from sh_user t where mobile='"+userCode+"' and is_del='2' order by created_at desc");		
 	Map map=(Map) list.get(0);
 	 List li=AppBo.query("select id from sh_common_icon where user_id='"+userCode+"'");
 	    String ids="";
