@@ -28,13 +28,10 @@ public class RegisterService implements AppService {
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
-		String userName = (String) reqmap.get("username");// 用户名
-		if (StringUtils.isBlank(userName)) {
-			resMap.put("result", "E");
-			resMap.put("msg", "用户名不能为空！");
-			JSONObject json = new JSONObject(resMap);
-			return json.toString();
-		}
+		String userName ="";
+		if(reqmap.get("username")!=null){
+			userName=(String) reqmap.get("username");// 用户名
+		}	
 		String passWord = (String) reqmap.get("password");// 密码
 		if (StringUtils.isBlank(passWord)) {
 			resMap.put("result", "E");
