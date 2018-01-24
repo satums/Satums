@@ -82,7 +82,7 @@ public String login(String jsondata){
 	String password=(String) reqMap.get("password");
 	String msg="";
 	String result="S";
-	String sql="select pwd from sh_camer where deviceid='"+deviceid+"' and usercode='"+userid+"'";
+	String sql="select pwd from sh_camer where deviceid='"+deviceid+"' and usercode='"+userid+"' and account='"+account+"'";
 	List list=AppBo.query(sql);
 	Map map=new  HashMap();
 	if(list.size()>0){	
@@ -97,6 +97,9 @@ public String login(String jsondata){
 				resMap.put("result","E");
 				resMap.put("msg","用户名密码不匹配！");
 			}
+	}else{
+		resMap.put("result", "E");
+		resMap.put("msg", "用户名输入有误！");	
 	}	
 	}catch(Exception e){
 		resMap.put("result", "E");
