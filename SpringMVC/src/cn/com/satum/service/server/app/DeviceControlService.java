@@ -52,8 +52,7 @@ public class DeviceControlService implements AppService {
 			String type = (String) reqMap.get("type");
 			if("1".equals(type)){
 				resStr = queryDeviceType(reqMap);// 查询设备类型
-			}
-			else{
+			}else{
 				resStr = queryDevice(reqMap);// 查询设备
 			}
 		}
@@ -136,8 +135,11 @@ public class DeviceControlService implements AppService {
 						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"')");				
 				//如果类型ID是摄像头
 				if(typeId.equals("90")){
+					String uid = (String) reqMap.get("uid");
+					String account = (String) reqMap.get("account");
+					String password = (String) reqMap.get("password");
 					AppBo.runSQL("insert into sh_camer (id,usercode,deviceid,type_id,type_name,code,name,account,pwd,status,is_del) values "
-							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','admin','"+CheckData.EncoderByMd5("888888")+"','2','2')");
+							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+uid+"','"+name+"','"+account+"','"+CheckData.EncoderByMd5(password)+"','2','2')");
 				}			
 			}
 		}
@@ -337,6 +339,27 @@ try{
 		Map<String, Object> resMap = new HashMap<String, Object>();// 接口最终返回数据的map
 
 		String userCode = (String) reqMap.get("userCode");
+		String type=(String) reqMap.get("type");
+		String sql="";
+		if(type.equals("2")){
+			sql="SELECT id,name,room_id,room_name,status,device_type_name,device_type_id FROM sh_device WHERE is_del='2' AND user_code='"
+						+ userCode + "' ORDER BY soft ";
+		}else{
+			String source_type=(String) reqMap.get("source_type");
+			String source_id=(String) reqMap.get("source_id");
+			//这里做扩展，以后可以添加根据设备类型查询
+			switch(source_type){
+			case "room":
+				sql="SELECT id,name,room_id,room_name,status,device_type_name,device_type_id FROM sh_device WHERE is_del='2' AND user_code='"
+						+ userCode + "' and room_id='"+source_id+"' ORDER BY soft ";
+				break;
+			default:
+				sql="SELECT id,name,room_id,room_name,status,device_type_name,device_type_id FROM sh_device WHERE is_del='2' AND user_code='"
+						+ userCode + "' and room_id='"+source_id+"'  ORDER BY soft ";
+				break;
+			}
+			
+		}
 		if (StringUtils.isBlank(userCode)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "获取不到用户信息！");
@@ -347,8 +370,7 @@ try{
 		// 根据userCode查询设备
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> deviceList = AppBo
-				.query("SELECT id,name,room_id,room_name,status FROM sh_device WHERE is_del='2' AND user_code='"
-						+ userCode + "' ORDER BY soft " ); 
+				.query(sql); 
 		
 		if (deviceList.size()==0)  {
 			resMap.put("result", "S");
