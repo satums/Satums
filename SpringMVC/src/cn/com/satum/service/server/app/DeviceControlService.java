@@ -1,6 +1,7 @@
 package cn.com.satum.service.server.app;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,8 @@ public class DeviceControlService implements AppService {
 
 		String userCode = (String) reqMap.get("userCode");
 		String name = (String) reqMap.get("name");
+		String zjbh = (String) reqMap.get("zjbh");
+		
 		if (StringUtils.isBlank(name)) {
 			resMap.put("result", "E");
 			resMap.put("msg", "基础设备名称不能为空！");
@@ -88,7 +91,24 @@ public class DeviceControlService implements AppService {
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
-		
+		Map maps=new HashMap();
+		try {
+			maps=new DataUtil().dataQuery(zjbh,userCode);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String IP=maps.get("ip").toString();
+		String flag=maps.get("result").toString();
+		String message=maps.get("message").toString();
+		int second=Integer.valueOf(maps.get("second").toString());
+		int port=Integer.valueOf(maps.get("port").toString());	
+		if(!flag.equals("S")||second>65){
+			resMap.put("result", "E");
+			resMap.put("msg", "主机不在线不能添加设备，请检查主机网络！");
+			JSONObject json = new JSONObject(resMap);
+			return json.toString();
+		}
 		String typeId = (String) reqMap.get("typeId"); //设备类型id
 		
 		@SuppressWarnings("unchecked")
@@ -97,8 +117,8 @@ public class DeviceControlService implements AppService {
 		if (commonDeviceList.size()==0) {
 			String soft = getSoft("sh_common_device", userCode);
 			// 插入基础设备表
-			AppBo.runSQL("INSERT INTO sh_common_device (id,num,name,user_code,device_type_id,soft,parent_id) VALUES('" + DataUtil.getUUID()
-					+ "','" + num + "','" + name + "','" + userCode + "','" + typeId + "','" + soft + "','1')");
+			AppBo.runSQL("INSERT INTO sh_common_device (id,num,name,user_code,device_type_id,soft,parent_id,zjbh) VALUES('" + DataUtil.getUUID()
+					+ "','" + num + "','" + name + "','" + userCode + "','" + typeId + "','" + soft + "','1','"+zjbh+"')");
 		}
 		
 		@SuppressWarnings("unchecked")
@@ -118,10 +138,7 @@ public class DeviceControlService implements AppService {
 		List<Map<String, Object>> deviceTypeList = AppBo
 				.query("SELECT id,name from sh_common_device_type where parent_id = '" + typeId + "'  AND is_del='2' ");
 		
-		if (deviceTypeList.size()==0) {//当控制类型level为最底层时
-			
-			
-				
+		if (deviceTypeList.size()==0) {//当控制类型level为最底层时		
 			// 查询设备类型表
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> deviceTypeList1 = AppBo
@@ -131,15 +148,15 @@ public class DeviceControlService implements AppService {
 				String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
 				String soft = getSoft("sh_device", userCode);
 				String ids=DataUtil.getUUID();
-				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft) values "
-						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"')");				
+				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh) values "
+						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"')");				
 				//如果类型ID是摄像头
 				if(typeId.equals("90")){
 					String uid = (String) reqMap.get("uid");
 					String account = (String) reqMap.get("account");
 					String password = (String) reqMap.get("password");
 					AppBo.runSQL("insert into sh_camer (id,usercode,deviceid,type_id,type_name,code,name,account,pwd,status,is_del) values "
-							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+uid+"','"+name+"','"+account+"','"+CheckData.EncoderByMd5(password)+"','2','2')");
+							+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+ids+"','"+deviceTypeId+"','"+deviceTypeName+"','"+uid+"','"+name+"','"+account+"','"+password+"','2','2')");
 				}			
 			}
 		}
@@ -149,8 +166,8 @@ public class DeviceControlService implements AppService {
 			String deviceTypeId = (String) deviceTypeMap.get("id");//设备类型id
 			String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
 			String soft = getSoft("sh_device", userCode);
-			AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft) values "
-					+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"')");
+			AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh) values "
+					+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"')");
 		} 
 		
 		
@@ -340,22 +357,24 @@ try{
 
 		String userCode = (String) reqMap.get("userCode");
 		String type=(String) reqMap.get("type");
+		String zjbh=(String) reqMap.get("zjbh");
 		String sql="";
 		if(type.equals("2")){
-			sql="SELECT id,name,room_id,room_name,status,device_type_name,device_type_id FROM sh_device WHERE is_del='2' AND user_code='"
-						+ userCode + "' ORDER BY soft ";
+			sql="select t2.id,t2.name,t2.room_id,t2.room_name,t2.status,t2.device_type_name,t2.device_type_id,t2.account,t2.pwd,t2.code,t2.zjbh  from (SELECT t.id,t.name,t.room_id,t.room_name,t.status,t.device_type_name,t.device_type_id,t1.account,t1.pwd,t1.code,t.zjbh,t.is_del,t.user_code,t.soft FROM sh_device t left join sh_camer t1 on t.id=t1.deviceid) t2 WHERE t2.is_del='2' AND t2.user_code='"
+						+ userCode + "' and t2.zjbh='"+zjbh+"'  ORDER BY soft ";
 		}else{
 			String source_type=(String) reqMap.get("source_type");
 			String source_id=(String) reqMap.get("source_id");
 			//这里做扩展，以后可以添加根据设备类型查询
 			switch(source_type){
 			case "room":
-				sql="SELECT id,name,room_id,room_name,status,device_type_name,device_type_id FROM sh_device WHERE is_del='2' AND user_code='"
-						+ userCode + "' and room_id='"+source_id+"' ORDER BY soft ";
+				sql="select t2.id,t2.name,t2.room_id,t2.room_name,t2.status,t2.device_type_name,t2.device_type_id,t2.account,t2.pwd,t2.code,t2.zjbh  from (SELECT t.id,t.name,t.room_id,t.room_name,t.status,t.device_type_name,t.device_type_id,t1.account,t1.pwd,t1.code,t.zjbh,t.is_del,t.user_code,t.soft FROM sh_device t left join sh_camer t1 on t.id=t1.deviceid) t2 WHERE t2.is_del='2' AND t2.user_code='"
+						+ userCode + "' and t2.room_id='"+source_id+"'  and t2.zjbh='"+zjbh+"'  ORDER BY soft ";
 				break;
+			
 			default:
-				sql="SELECT id,name,room_id,room_name,status,device_type_name,device_type_id FROM sh_device WHERE is_del='2' AND user_code='"
-						+ userCode + "' and room_id='"+source_id+"'  ORDER BY soft ";
+				sql="select t2.id,t2.name,t2.room_id,t2.room_name,t2.status,t2.device_type_name,t2.device_type_id,t2.account,t2.pwd,t2.code,t2.zjbh  from (SELECT t.id,t.name,t.room_id,t.room_name,t.status,t.device_type_name,t.device_type_id,t1.account,t1.pwd,t1.code,t.zjbh,t.is_del,t.user_code,t.soft FROM sh_device t left join sh_camer t1 on t.id=t1.deviceid) t2 WHERE t2.is_del='2' AND t2.user_code='"
+						+ userCode + "' and t2.room_id='"+source_id+"'  and t2.zjbh='"+zjbh+"'  ORDER BY soft ";
 				break;
 			}
 			
