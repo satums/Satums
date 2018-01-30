@@ -146,10 +146,11 @@ public class DeviceControlService implements AppService {
 			for (Map<String, Object> deviceTypeMap : deviceTypeList1) {
 				String deviceTypeId = (String) deviceTypeMap.get("id");//设备类型id
 				String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
+				String devaddress=getAddress(zjbh,userCode,deviceTypeId);
 				String soft = getSoft("sh_device", userCode);
 				String ids=DataUtil.getUUID();
-				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh) values "
-						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"')");				
+				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh,devaddress) values "
+						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"','"+devaddress+"')");				
 				//如果类型ID是摄像头
 				if(typeId.equals("90")){
 					String uid = (String) reqMap.get("uid");
@@ -165,9 +166,10 @@ public class DeviceControlService implements AppService {
 			
 			String deviceTypeId = (String) deviceTypeMap.get("id");//设备类型id
 			String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
+			String devaddress=getAddress(zjbh,userCode,typeId);
 			String soft = getSoft("sh_device", userCode);
-			AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh) values "
-					+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"')");
+			AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh,devaddress) values "
+					+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"','"+devaddress+"')");
 		} 
 		
 		
@@ -416,17 +418,35 @@ try{
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> softLists = AppBo
-				.query("SELECT max(soft) as soft from " + table + " where is_del='2' AND user_code = '" + userCode + "' ");
+				.query("SELECT max(cast(soft as SIGNED INTEGER)) as soft from " + table + " where is_del='2' AND user_code = '" + userCode + "' ");
 	    Integer soft = 0;
 	    if (softLists != null && softLists.size() > 0) { 
 	    	for (Map<String, Object> softList : softLists) {
-				String softs = (String) softList.get("soft");
+				String softs =softList.get("soft").toString();
 				if(softs != null){					
 					soft = Integer.parseInt(softs) + 1;
 				}
 		    }
 	    }
 		return soft.toString();
+
+	}
+public static String getAddress(String zjbh, String userCode,String device_type) {
+		String devaddress="0";
+		System.out.println(device_type+"======================");
+		String sql="select max(cast(t.devaddress as SIGNED INTEGER)) devaddress from sh_device t where   zjbh='"+zjbh+"' and user_code='"+userCode+"' and t.device_type_id in(select id from sh_common_device_type where parent_id='"+device_type+"') and t.is_del='2'";
+		List list=AppBo.query(sql);
+		Map map=(Map) list.get(0);
+		if(map.get("devaddress")!=null){
+			devaddress=map.get("devaddress").toString();
+			System.out.println(devaddress+"===777777777777777");
+			devaddress=(Integer.valueOf(devaddress)+1)+"";
+			System.out.println(devaddress+"===88888888888888888888");
+
+		}
+		System.out.println(devaddress+"===111===================");
+
+		return devaddress.toString();
 
 	}
 }
