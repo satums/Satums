@@ -16,6 +16,7 @@ import java.util.Random;
 import net.sf.json.JSONObject;
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.service.server.util.DataUtil;
+import cn.com.satum.service.server.util.FileData;
 
 import com.alibaba.fastjson.JSON;
 
@@ -24,12 +25,12 @@ import sun.misc.BASE64Encoder;
 
 public class FileControlService implements AppService{
 private final static String json="{"
-		+ "\"flag\":\"add\","//头像1，图标为2
+		+ "\"flag\":\"add\","
 		+ "\"type\":\"1\","//头像1，图标为2
 		+ "\"userCode\":\"15738928228\","
 		+ "\"fileName\":\"头像.jpg\","
 		+ "\"file\":\"byte\","
-		+ "\"fileType\":\"image\""//图像后缀	
+		+ "\"fileType\":\"image\""
 		+ "}";
 @Override
 public String getInfo(String jsondata) {
@@ -151,7 +152,7 @@ public String getInfo(String jsondata) {
         FileOutputStream fos = null;
         try
         {
-            String filedir = getdir(filetype);
+            String filedir = new FileData().getdir(filetype);
             BASE64Decoder decoder= new BASE64Decoder();
             byte[] bytes = decoder.decodeBuffer(file);
 
@@ -161,7 +162,7 @@ public String getInfo(String jsondata) {
             }
             Integer rdm = new Random().nextInt(10000);
             //
-            String savename = getDataTimeString(true) +fileName.substring(fileName.indexOf('.'));
+            String savename = new FileData().getDataTimeString(true) +fileName.substring(fileName.indexOf('.'));
             fos = new FileOutputStream(filedir+savename);
             // 将字节数组bytes中的数据，写入文件输出流fos中
             fos.write(bytes);
@@ -178,129 +179,7 @@ public String getInfo(String jsondata) {
       
     }
 
-    /**
-     * @param filepath
-     * E:\Staums\immage\2017-01-01
-     */
-    private static String getdir(String filetype)
-    {
-        String path = "/usr/local/Staums/{0}/" + getDataString()
-                + "/";
-        switch (filetype)
-        {
-            case "image":
-                path = path.replace("{0}", "image");
-                break;
-            case "vedio":
-                path = path.replace("{0}", "vedio");
-                break;                    
-            default:
-                return "";
-        }
-        try
-        {
-            java.io .File file = new java.io .File(path);
-            if(!file.exists())
-            {
-                if(!file.mkdirs())
-                {
-                    return "";
-                }
-            }
-            return path;
-        }
-        catch(Exception ex)
-        {
-            return "";
-        }
-        finally
-        {
-            
-        }
-    }
-
-    /*
-     * 文件下载服务
-     */
-    public static String downloadFile(String filepath)
-    {
-//        filepath = "F:\\youme\\vedio\\2013-09-03\\201309031700143294.amr";
-        FileInputStream in = null;
-        byte bytes[] = null;
-        String file = null;
-        try
-        {
-            in = new FileInputStream(filepath);
-            bytes = new byte[in.available()];
-
-            // 从输入流in中,将 bytes.length 个字节的数据读入字节数组bytes中
-            in.read(bytes);
-            BASE64Encoder encoder = new BASE64Encoder();
-            file = encoder.encode(bytes);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return "";
-        }
-        finally
-        {
-            try
-            {
-                in.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        System.out.println(file);
-//        return bytes;
-        return file;
-    }
-    /*
-     * 获取当前时间
-     */
-    private static String getDataTimeString(Boolean isfilename)
-    {
-        try
-        {
-            SimpleDateFormat formatter = null;
-            if(!isfilename)
-            {
-                formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-            }
-            else
-            {
-                formatter= new SimpleDateFormat("yyyyMMddHHmmss"); 
-            }
-            Date curDate = new Date(System.currentTimeMillis());//获取当前时间     
-            return formatter.format(curDate); 
-        }
-        catch(Exception ex)
-        {
-            System.out.println(ex.getMessage());
-            return "";
-        }
-    }
-
-    /*
-     * 获取当前日期
-     */
-    private static String getDataString()
-    {
-        try
-        {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");     
-            Date curDate = new Date(System.currentTimeMillis());//获取当前时间     
-            return formatter.format(curDate); 
-        }
-        catch(Exception ex)
-        {
-            System.out.println(ex.getMessage());
-            return "";
-        }
-    }
+   
 
 	  public static void main(String[] args) throws IOException {
 		 /**
