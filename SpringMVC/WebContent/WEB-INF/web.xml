@@ -18,6 +18,9 @@
    </listener-class>
   </listener>
   <listener>
+    <listener-class>cn.com.satum.server.SocketListenerPusher</listener-class>
+  </listener>
+   <listener>
     <listener-class>cn.com.satum.server.InitListener</listener-class>
   </listener>
   <listener>
