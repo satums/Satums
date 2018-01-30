@@ -182,11 +182,11 @@ public static String getSoft(String table, String userCode) {
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> softLists = AppBo
-				.query("SELECT max(soft) as soft from " + table + " where is_del='2' AND user_id = '" + userCode + "' ");
+				.query("SELECT max(cast(soft as SIGNED INTEGER)) as soft  from " + table + " where is_del='2' AND user_id = '" + userCode + "' ");
 	    Integer soft = 0;
 	    if (softLists != null && softLists.size() > 0) { 
 	    	for (Map<String, Object> softList : softLists) {
-				String softs = (String) softList.get("soft");
+				String softs =softList.get("soft").toString();
 				if(softs != null){					
 					soft = Integer.parseInt(softs) + 1;
 				}
