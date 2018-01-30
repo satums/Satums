@@ -433,19 +433,13 @@ try{
 	}
 public static String getAddress(String zjbh, String userCode,String device_type) {
 		String devaddress="0";
-		System.out.println(device_type+"======================");
 		String sql="select max(cast(t.devaddress as SIGNED INTEGER)) devaddress from sh_device t where   zjbh='"+zjbh+"' and user_code='"+userCode+"' and t.device_type_id in(select id from sh_common_device_type where parent_id='"+device_type+"') and t.is_del='2'";
 		List list=AppBo.query(sql);
 		Map map=(Map) list.get(0);
 		if(map.get("devaddress")!=null){
 			devaddress=map.get("devaddress").toString();
-			System.out.println(devaddress+"===777777777777777");
 			devaddress=(Integer.valueOf(devaddress)+1)+"";
-			System.out.println(devaddress+"===88888888888888888888");
-
 		}
-		System.out.println(devaddress+"===111===================");
-
 		return devaddress.toString();
 
 	}
