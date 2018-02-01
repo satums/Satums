@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.com.Data.Bo.AppBo;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class AppMasterControlService implements AppService{
@@ -64,36 +65,45 @@ public String query(String userCode){
 }
 public String update(String jsondata,String userCode){
 	Map map=new HashMap();
-	Map maps=JSONObject.fromObject(jsondata);
-	if(maps.get("content")==null){
-		map.put("result", "E");
-		map.put("msg", "主机描述不能为空");
-		String str=JSONObject.fromObject(map).toString();
-		return str;
-	}else{
-		String content=maps.get("content").toString();
-		String zjbh=maps.get("zjbh").toString();
-	String sql="select user_code,zjbh,content from sh_masterdata where user_code='"+userCode+"'and zjbh='"+zjbh+"' and b2='2'";
-	
-	try {
-		List list=AppBo.query(sql);
-		if(list.size()>0){
-			AppBo.runSQL("update sh_masterdata set content='"+content+"' where zjbh='"+zjbh+"'");
-			map.put("result", "S");
-			map.put("msg","主机修改成功");
-		}else{
+	String ret="";
+	JSONArray data=JSONObject.fromObject(jsondata).getJSONArray("data");
+	Object[] datas=data.toArray();	
+	for(int i=0;i<datas.length;i++){
+		Map maps=JSONObject.fromObject(datas[i]);
+		if(maps.get("content")==null){
 			map.put("result", "E");
-			map.put("msg","主机不存在，请先进行添加");
-		}
+			map.put("msg", "主机描述不能为空");
+			String str=JSONObject.fromObject(map).toString();
+			return str;
+		}else{
+			String content=maps.get("content").toString();
+			String zjbh=maps.get("zjbh").toString();
+			String status=maps.get("status").toString();
+		String sql="select user_code,zjbh,content from sh_masterdata where user_code='"+userCode+"'and zjbh='"+zjbh+"' and b2='2'";
 		
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		map.put("result", "E");
-		map.put("msg",e.getMessage());
-		e.printStackTrace();
+		try {
+			List list=AppBo.query(sql);
+			if(list.size()>0){
+				AppBo.runSQL("update sh_masterdata set content='"+content+"',b1='"+status+"' where zjbh='"+zjbh+"'");
+				
+			}else{
+				map.put("result", "E");
+				map.put("msg","主机不存在，请先进行添加");
+				ret=JSONObject.fromObject(map).toString();
+				return ret;
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			map.put("result", "E");
+			map.put("msg",e.getMessage());
+			e.printStackTrace();
+		}
 	}
-	String ret=JSONObject.fromObject(map).toString();
+	}
+	map.put("result", "S");
+	map.put("msg","主机修改成功");
+	ret=JSONObject.fromObject(map).toString();
 	return ret;
-	}
 }
 }
