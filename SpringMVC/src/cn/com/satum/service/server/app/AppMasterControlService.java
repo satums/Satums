@@ -40,7 +40,7 @@ private final String json="{"
 		return ret;
 	}
 public String query(String userCode){
-	String sql="select user_code,zjbh,content from sh_masterdata where user_code='"+userCode+"' and b2='2'";
+	String sql="select user_code,zjbh,content,b1 as status from sh_masterdata where user_code='"+userCode+"' and b2='2'";
 	Map map=new HashMap();
 	try {
 		List list=AppBo.query(sql);
