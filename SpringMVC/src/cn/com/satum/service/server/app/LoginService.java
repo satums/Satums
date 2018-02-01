@@ -91,8 +91,7 @@ List lis=new ArrayList();
 		map.put("zjbh", ((Map)mlist.get(0)).get("zjbh").toString());
 	}else{
 		map.put("zjbh", "");
-	}
-	
+	}	
 	List li=AppBo.query("select id from sh_common_icon where user_id='"+userCode+"' and is_del='2' order by created_at desc");
 	    
 	 String ids="";
