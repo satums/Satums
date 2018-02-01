@@ -86,8 +86,16 @@ List lis=new ArrayList();
     	        + request.getServerPort()+"/download/picture?flag=image&id=";
 	List list=AppBo.query("select t.mobile as userCode,t.username,t.email,t.provice_id,t.city_id,t.area_id,t.address,'#' url from sh_user t where mobile='"+userCode+"'");		
 	Map map=(Map) list.get(0);
-	 List li=AppBo.query("select id from sh_common_icon where user_id='"+userCode+"' and is_del='2' order by created_at desc");
-	    String ids="";
+	List mlist=AppBo.query("select zjbh from sh_masterdata where user_code='"+userCode+"' and b1='1' and b2='2'");
+	if(mlist.size()>0){
+		map.put("zjbh", ((Map)mlist.get(0)).get("zjbh").toString());
+	}else{
+		map.put("zjbh", "");
+	}
+	
+	List li=AppBo.query("select id from sh_common_icon where user_id='"+userCode+"' and is_del='2' order by created_at desc");
+	    
+	 String ids="";
 	    
 	    if(li.size()>0){
 	    	ids=((Map)li.get(0)).get("id").toString();
