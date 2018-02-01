@@ -75,7 +75,7 @@ public class DeviceControlService implements AppService {
 
 		String userCode = (String) reqMap.get("userCode");
 		String name = (String) reqMap.get("name");
-		String zjbh = (String) reqMap.get("zjbh");
+	String zjbh="";
 		
 		if (StringUtils.isBlank(name)) {
 			resMap.put("result", "E");
@@ -91,25 +91,32 @@ public class DeviceControlService implements AppService {
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
+		String typeId = (String) reqMap.get("typeId"); //设备类型id
 		Map maps=new HashMap();
+		if(!typeId.equals("90")){
+			zjbh = (String) reqMap.get("zjbh");
 		try {
 			maps=new DataUtil().dataQuery(zjbh,userCode);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String IP=maps.get("ip").toString();
-		String flag=maps.get("result").toString();
-		String message=maps.get("message").toString();
-		int second=Integer.valueOf(maps.get("second").toString());
-		int port=Integer.valueOf(maps.get("port").toString());	
-		if(!flag.equals("S")||second>65){
-			resMap.put("result", "E");
-			resMap.put("msg", "主机不在线不能添加设备，请检查主机网络！");
-			JSONObject json = new JSONObject(resMap);
-			return json.toString();
+		
+		
+			String IP=maps.get("ip").toString();
+			String flag=maps.get("result").toString();
+			String message=maps.get("message").toString();
+			int second=Integer.valueOf(maps.get("second").toString());
+			int port=Integer.valueOf(maps.get("port").toString());	
+			if(!flag.equals("S")||second>65){
+				resMap.put("result", "E");
+				resMap.put("msg", "主机不在线不能添加设备，请检查主机网络！");
+				JSONObject json = new JSONObject(resMap);
+				return json.toString();
+			}
 		}
-		String typeId = (String) reqMap.get("typeId"); //设备类型id
+		
+		
 		
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> commonDeviceList = AppBo
