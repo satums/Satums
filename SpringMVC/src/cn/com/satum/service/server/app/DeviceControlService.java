@@ -83,7 +83,6 @@ public class DeviceControlService implements AppService {
 			JSONObject json = new JSONObject(resMap);
 			return json.toString();
 		}
-	
 		String num = (String) reqMap.get("num");
 		if (StringUtils.isBlank(num)) {
 			resMap.put("result", "E");
