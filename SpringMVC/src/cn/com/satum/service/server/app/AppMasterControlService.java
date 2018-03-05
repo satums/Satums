@@ -56,6 +56,7 @@ public String query(String userCode){
 			map.put("msg","您还没有添加主机，请先添加。");
 		}
 		
+		
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		map.put("result", "E");
