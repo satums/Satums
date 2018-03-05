@@ -38,8 +38,7 @@ private final String json="{"
 			ret=update(jsondata,userCode);
 		}else if(flag.equals("delete")){
 			ret=delete(jsondata,userCode);
-		}
-		
+		}		
 		return ret;
 	}
 public String query(String userCode){
