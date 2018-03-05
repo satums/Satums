@@ -36,6 +36,8 @@ private final String json="{"
 			ret=query(userCode);
 		}else if(flag.equals("update")){
 			ret=update(jsondata,userCode);
+		}else if(flag.equals("delete")){
+			ret=delete(jsondata,userCode);
 		}
 		return ret;
 	}
@@ -98,11 +100,45 @@ public String update(String jsondata,String userCode){
 			map.put("result", "E");
 			map.put("msg",e.getMessage());
 			e.printStackTrace();
+			return ret;
 		}
 	}
 	}
 	map.put("result", "S");
 	map.put("msg","主机修改成功");
+	ret=JSONObject.fromObject(map).toString();
+	return ret;
+}
+public String delete(String jsondata,String userCode){
+	Map map=new HashMap();
+	String ret="";
+		Map maps=JSONObject.fromObject(jsondata);		
+		String zjbh=maps.get("zjbh").toString();
+		try {
+			String sql="select * from sh_masterdata where zjbh='"+zjbh+"'";
+			List list=AppBo.query(sql);
+			if(list.size()>0){
+				AppBo.runSQL("update sh_masterdata set user_code='',content='' where zjbh='"+zjbh+"'");
+				
+			}else{
+				map.put("result", "E");
+				map.put("msg","该用户下没有此主机");
+				ret=JSONObject.fromObject(map).toString();
+				return ret;
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			map.put("result", "E");
+			map.put("msg",e.getMessage());
+			e.printStackTrace();
+			ret=JSONObject.fromObject(map).toString();
+			return ret;
+		}
+	
+	
+	map.put("result", "S");
+	map.put("msg","主机解绑成功");
 	ret=JSONObject.fromObject(map).toString();
 	return ret;
 }
