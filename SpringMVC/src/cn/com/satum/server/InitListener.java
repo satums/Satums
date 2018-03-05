@@ -47,8 +47,12 @@ public void contextInitialized(ServletContextEvent context) {
         	} catch (SocketException e) {
         		// TODO Auto-generated catch block
         		e.printStackTrace();
-        	}  
+        	} 
+        	
+        	
              //接收从客户端发送过来的数据  
+        	
+        	
              DatagramPacket dp_receive = new DatagramPacket(buf, buf.length);  
              System.out.println("server is on，waiting for client to send data......");  
              boolean f = true;  
@@ -63,7 +67,6 @@ public void contextInitialized(ServletContextEvent context) {
                  String ips=dp_receive.getAddress().getHostAddress();
                  int ports=dp_receive.getPort();
                  String data=new String(dp_receive.getData());
-                 System.out.println("----------1111---"+data);
                  str_send=new DataUtil().dataParse(data,ips,ports);
                  System.out.println(str_send);
                  //接收数据返回接收的状态
@@ -82,7 +85,7 @@ public void contextInitialized(ServletContextEvent context) {
          }  
      };  
      ScheduledExecutorService service = Executors  
-             .newSingleThreadScheduledExecutor();  
+             .newSingleThreadScheduledExecutor();     
      // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间  
      service.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.SECONDS);  	 
 }
