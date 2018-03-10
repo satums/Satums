@@ -38,7 +38,9 @@ private final String json="{"
 			ret=update(jsondata,userCode);
 		}else if(flag.equals("delete")){
 			ret=delete(jsondata,userCode);
-		}		
+		}else if(flag.equals("add")){
+			ret=add(jsondata,userCode);
+		}			
 		return ret;
 	}
 public String query(String userCode){
@@ -140,6 +142,43 @@ public String delete(String jsondata,String userCode){
 	
 	map.put("result", "S");
 	map.put("msg","主机解绑成功");
+	ret=JSONObject.fromObject(map).toString();
+	return ret;
+}
+public String add(String jsondata,String userCode){
+	Map map=new HashMap();
+	String ret="";
+		Map maps=JSONObject.fromObject(jsondata);		
+		String zjbh=maps.get("zjbh").toString();
+		String content=maps.get("content").toString();
+		String sqls="select max(id+1) id from sh_masterdata";
+		List li=AppBo.query(sqls);
+		String id=((Map)li.get(0)).get("id").toString();
+		try {
+			String sql="select * from sh_masterdata where zjbh='"+zjbh+"'";
+			List list=AppBo.query(sql);
+			if(list.size()>0){
+				map.put("result", "E");
+				map.put("msg","该主机已经被添加，请联系厂家进行配置。");
+				ret=JSONObject.fromObject(map).toString();
+				return ret;			
+			}else{	
+				AppBo.runSQL("insert into sh_masterdata (id,user_code,zjbh,content,b1,b2,b3)values"
+						+ "("+id+",'"+userCode+"','"+zjbh+"','"+content+"','1','2','1')");
+				AppBo.runSQL("update sh_masterdata set b2='1' where user_code='"+userCode+"' and id <"+id);
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			map.put("result", "E");
+			map.put("msg",e.getMessage());
+			e.printStackTrace();
+			ret=JSONObject.fromObject(map).toString();
+			return ret;
+		}
+	
+	map.put("result", "S");
+	map.put("msg","主机绑定成功");
 	ret=JSONObject.fromObject(map).toString();
 	return ret;
 }
