@@ -1,16 +1,13 @@
 package cn.com.satum.service.server.app;
 
-import java.net.SocketException;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.service.server.util.DataUtil;
-import cn.com.satum.util.PostStyle;
-import cn.com.satum.util.Sender;
+import cn.com.satum.util.UdpUtil;
 public class ConAddService implements AppService {
 	private static AppToMaster atm=new AppToMaster();
 	private final static String jsondata1="{"
@@ -44,6 +41,7 @@ public class ConAddService implements AppService {
 			String status=map.get("status").toString();
 			String flag="S";
 			Map maps=new HashMap();
+			Map mapm=new HashMap();
 			try {
 				maps=new DataUtil().dataQuery(zjbh,userid);
 			} catch (ParseException e1) {
@@ -65,22 +63,12 @@ public class ConAddService implements AppService {
 	//second是检测主机心跳检测的时间可以大于心跳检测时间1-5秒，假设心跳检测时间为60秒
 	if(!flag.equals("S")||second>65){
 		flag="E";
-		maps.put("message", "主机不在线");
+		mapm.put("message", "主机不在线");
 	}else{
 		switch(mark){
 		case "device":
-			//发送设备的信息至主机
-			try {
-				String json="{"		
-						+ "\"code\":\"041b93cad51347c28f4c6126d5d6058f\","
-						+ "\"status\":\"1\""
-						+ "}";
-				new Sender().send(json,IP,port);
-				atm.DeviceUpdate(conID, status);
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			String msg=new UdpUtil().getNetInfo(userid,zjbh,conID,status,IP,port);
+			mapm.put("message",msg);
 			break;
 		case "scene":
 			//发送情景的信息至主机
@@ -91,7 +79,7 @@ public class ConAddService implements AppService {
 		
 		}			
 	}
-			return JSONObject.fromObject(maps).toString();
+			return JSONObject.fromObject(mapm).toString();
 		}
 
 }

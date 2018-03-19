@@ -2,6 +2,7 @@ package cn.com.satum.service.server.app;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import com.alibaba.fastjson.JSONObject;
 import cn.com.Data.Bo.AppBo;
 import cn.com.satum.service.server.util.CheckData;
 import cn.com.satum.service.server.util.DataUtil;
+import cn.com.satum.service.server.util.TcpDataUtil;
+import cn.com.satum.util.TcpUtil;
 
 /**
  * @author lwf
@@ -70,6 +73,7 @@ public class DeviceControlService implements AppService {
 	 * @throws NoSuchAlgorithmException 
 	 */
 	public String addDevice(Map<String, Object> reqMap) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+List listtcp=new ArrayList();
 
 		Map<String, Object> resMap = new HashMap<String, Object>();
 
@@ -95,7 +99,7 @@ public class DeviceControlService implements AppService {
 		if(!typeId.equals("90")){
 			zjbh = (String) reqMap.get("zjbh");
 		try {
-			maps=new DataUtil().dataQuery(zjbh,userCode);
+			maps=new TcpDataUtil().dataQuery(zjbh,userCode);
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -122,6 +126,7 @@ public class DeviceControlService implements AppService {
 				.query("SELECT * from sh_common_device where name='"+ name +"' AND num = '" + num + "' AND user_code = '" + userCode + "' AND device_type_id = '" + typeId + "' AND is_del='2' ");
 		if (commonDeviceList.size()==0) {
 			String soft = getSoft("sh_common_device", userCode);
+			
 			// 插入基础设备表
 			AppBo.runSQL("INSERT INTO sh_common_device (id,num,name,user_code,device_type_id,soft,parent_id,zjbh) VALUES('" + DataUtil.getUUID()
 					+ "','" + num + "','" + name + "','" + userCode + "','" + typeId + "','" + soft + "','1','"+zjbh+"')");
@@ -144,16 +149,22 @@ public class DeviceControlService implements AppService {
 		List<Map<String, Object>> deviceTypeList = AppBo
 				.query("SELECT id,name from sh_common_device_type where parent_id = '" + typeId + "'  AND is_del='2' ");
 		
-		if (deviceTypeList.size()==0) {//当控制类型level为最底层时		
+		if (deviceTypeList.size()==0) {//当控制类型level为最底层时	
+			
+			
 			// 查询设备类型表
 			@SuppressWarnings("unchecked")
 			List<Map<String, Object>> deviceTypeList1 = AppBo
 					.query("SELECT id,name from sh_common_device_type where id = '" + typeId + "'  AND is_del='2' ");
 			for (Map<String, Object> deviceTypeMap : deviceTypeList1) {
+				Map maptcp=new HashMap();
 				String deviceTypeId = (String) deviceTypeMap.get("id");//设备类型id
 				String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
 				String devaddress=getAddress(zjbh,userCode,deviceTypeId);
 				String soft = getSoft("sh_device", userCode);
+				maptcp.put("device_type", typeId);
+				maptcp.put("device_num", devaddress);
+				listtcp.add(maptcp);
 				String ids=DataUtil.getUUID();
 				AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh,devaddress) values "
 						+ "('"+ids+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+name+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"','"+devaddress+"')");				
@@ -169,16 +180,20 @@ public class DeviceControlService implements AppService {
 		}
 		
 		for (Map<String, Object> deviceTypeMap : deviceTypeList) {
-			
+			Map maptcp=new HashMap();
 			String deviceTypeId = (String) deviceTypeMap.get("id");//设备类型id
 			String deviceTypeName = (String) deviceTypeMap.get("name");//设备类型名称id
 			String devaddress=getAddress(zjbh,userCode,typeId);
+			maptcp.put("device_type", typeId);
+			maptcp.put("device_num", devaddress);
+			listtcp.add(maptcp);
 			String soft = getSoft("sh_device", userCode);
 			AppBo.runSQL("insert into sh_device (id,user_code,device_type_id,device_type_name,num,name,device_code,soft,zjbh,devaddress) values "
 					+ "('"+DataUtil.getUUID()+"','"+userCode+"','"+deviceTypeId+"','"+deviceTypeName+"','"+num+"','"+deviceTypeName+"','"+DataUtil.getUUID()+"','"+soft+"','"+zjbh+"','"+devaddress+"')");
 		} 
 		
-		
+		String msg=new TcpUtil().setNetInfo("device", "add", userCode, zjbh, listtcp);
+		System.out.println(msg);
 		resMap.put("result", "S");
 		resMap.put("msg", "设备添加成功！");
 		JSONObject json = new JSONObject(resMap);
@@ -423,14 +438,17 @@ try{
 	public String getSoft(String table, String userCode) {
 		
 		@SuppressWarnings("unchecked")
+		String sql="SELECT max(cast(soft as SIGNED INTEGER)+1) as soft from " + table + " where is_del='2' AND user_code = '" + userCode + "' ";
 		List<Map<String, Object>> softLists = AppBo
-				.query("SELECT max(cast(soft as SIGNED INTEGER)) as soft from " + table + " where is_del='2' AND user_code = '" + userCode + "' ");
+				.query(sql);
 	    Integer soft = 0;
+	    System.out.println(sql);
+	    System.out.println(softLists);
 	    if (softLists != null && softLists.size() > 0) { 
 	    	for (Map<String, Object> softList : softLists) {
 				String softs =softList.get("soft").toString();
 				if(softs != null){					
-					soft = Integer.parseInt(softs) + 1;
+					soft = Integer.parseInt(softs);
 				}
 		    }
 	    }

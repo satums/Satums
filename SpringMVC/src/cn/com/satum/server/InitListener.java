@@ -81,7 +81,8 @@ public void contextInitialized(ServletContextEvent context) {
                  //所以这里要将dp_receive的内部消息长度重新置为1024  
                  dp_receive.setLength(1024);  
              }  
-             ds.close();           
+             ds.close();  
+             
          }  
      };  
      ScheduledExecutorService service = Executors  

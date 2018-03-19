@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
+import cn.com.satum.service.server.util.DataUtil;
+import cn.com.satum.service.server.util.TcpDataUtil;
 
 import com.alibaba.fastjson.JSON;  
 
@@ -21,9 +23,7 @@ public class SocketListenerHandler implements Runnable {
     private final String dataRealTimeAction_id = "Agentdata_" + Math.random();  
       
     private static final String noData = "{'nodata':'心跳信息'}";  
-    private static final String errorData = "{'error':'无法解析的请求'}";  
-      
-      
+    private static final String errorData = "{'error':'无法解析的请求'}";     
     private Socket connectedsocket = null;  
       
     public SocketListenerHandler(Socket socket){  
@@ -38,31 +38,26 @@ DataOutputStream out = null;
         try {  
             connectedsocket.setSoTimeout(timeOut);  //表示接收数据时的等待超时数据, 此方法必须在接收数据之前执行才有效. 此外, 当输入流的 read()方法抛出 SocketTimeoutException后, Socket仍然是连接的, 可以尝试再次读数据, 单位为毫秒, 它的默认值为 0(表示会无限等待, 永远不会超时)  
             connectedsocket.setKeepAlive(false);   //表示对于长时间处于空闲状态的Socket, 是否要自动把它关闭.  
-          
-           
-                out = new DataOutputStream(connectedsocket.getOutputStream());            
-            System.out.println("读取数据中。。。。。。。。。。。。。"); 
-            in = new BufferedReader(new InputStreamReader(connectedsocket.getInputStream()));  
-          //  System.out.println("读取数据中----------------"+in.readLine().toString());
-          
-           // if (in.ready()) {  //判断流中是否有数据          
-	
-                resultData = in.readLine().toString();   //从Agent端接收到的数据    
-                System.out.println("读取数据中----------------"+resultData); 
+            out = new DataOutputStream(connectedsocket.getOutputStream());
+            in = new BufferedReader(new InputStreamReader(connectedsocket.getInputStream())); 
+            boolean flag=true;   
+           //if (in.ready()) {  //判断流中是否有数据          	
+                resultData = in.readLine().toString();                   
                 if (resultData==null || "".equals(resultData)) {  
-                	 out.writeUTF("无数据");
+                	 out.writeBytes(errorData);
                 } else if (resultData.charAt(0) != '{') {  //要在客户端定时维持心跳信息  
-                	 out.writeUTF("数据格式不对");
-                } else {          
-                    System.out.println("打印预处理信息Start......"); 
-                    Map map=JSONObject.fromObject(resultData);
-                    map.get("zjbh");
-                    System.out.println(connectedsocket);
-                    out.writeUTF("已接受");
-                    System.out.println("打印预处理信息End......");                   
-                }  
-                  
-          //  }  
+                	 out.writeBytes(errorData);
+                } else { 
+                	String ips=connectedsocket.getInetAddress().toString();
+                	int ports=connectedsocket.getPort();
+                   // Map map=JSONObject.fromObject(resultData);
+                  // String str= map.get("zjbh").toString(); 
+                    System.out.println("读取数据中----------------"+resultData); 
+                    String msg=new TcpDataUtil().dataParse(resultData,ips,ports);
+                    out.writeBytes(msg);
+                }   
+           // }
+           
 } catch (IOException e) {  
            
             e.printStackTrace();  
@@ -78,6 +73,7 @@ DataOutputStream out = null;
                      e.printStackTrace();  
                  }
         	 }
+        	
             if (in != null) {  
                 try {  
                     in.close();  
