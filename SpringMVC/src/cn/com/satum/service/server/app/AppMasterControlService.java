@@ -71,10 +71,7 @@ public String query(String userCode){
 public String update(String jsondata,String userCode){
 	Map map=new HashMap();
 	String ret="";
-	JSONArray data=JSONObject.fromObject(jsondata).getJSONArray("data");
-	Object[] datas=data.toArray();	
-	for(int i=0;i<datas.length;i++){
-		Map maps=JSONObject.fromObject(datas[i]);
+		Map maps=JSONObject.fromObject(jsondata);
 		if(maps.get("content")==null){
 			map.put("result", "E");
 			map.put("msg", "主机描述不能为空");
@@ -106,7 +103,7 @@ public String update(String jsondata,String userCode){
 			return ret;
 		}
 	}
-	}
+	
 	map.put("result", "S");
 	map.put("msg","主机修改成功");
 	ret=JSONObject.fromObject(map).toString();
