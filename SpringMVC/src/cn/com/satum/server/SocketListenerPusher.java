@@ -20,9 +20,9 @@ public class SocketListenerPusher implements Runnable {
         int poolsize = 0;  
           
         try {  
-            port = 8089;  
+            port = 8090;  
             poolsize = 100;  
-             System.out.println("===================8089端口启动"); 
+             System.out.println("======1111=============8090端口启动"); 
             serverSocket = new ServerSocket();  
             serverSocket.setReuseAddress(true);  
             serverSocket.bind(new InetSocketAddress(port));  
